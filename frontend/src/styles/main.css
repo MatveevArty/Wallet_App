@@ -1,0 +1,20 @@
+/* Поворот стрелки при раскрытом состоянии */
+.collapse.show ~ a .dropdown-arrow,
+[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(90deg);
+}
+
+/* Плавная анимация стрелки */
+.dropdown-arrow {
+    transition: transform 0.2s ease;
+}
+
+/* Шрифт для мест, где не отрабатывает small */
+.fs-14px {
+    font-size: 14px !important;
+}
+
+/*  Цвет заголовков для названий категорий расходов и доходов */
+.text-dark-violet {
+    color: #290661;
+}

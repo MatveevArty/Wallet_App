@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доходы</title>
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+</head>
+<body class="min-vh-100">
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <div class="col-auto px-0 d-flex flex-column justify-content-between border-end border-secondary-subtle"
+             style="width: 220px;">
+            
+            <div class="mt-3">
+                <a href="../main.html" class="text-decoration-none d-block">
+                    <div class="col-6 ms-5 ps-1 pe-2 mt-4 mb-1 text-center">
+                        <img src="../../static/svg/logo.svg" alt="Lumincoin FINANCE">
+                    </div>
+                </a>
+                <hr>
+                
+                <ul class="nav nav-pills flex-column mt-5" id="sidebar-links">
+                    <li class="mt-2">
+                        <a href="../main.html" class="mx-3 nav-link text-primary-emphasis fs-14px" aria-current="page">
+                            <i class="fa-solid fa-house"></i><span> Главная</span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="../categories/categories.html" class="mx-3 nav-link text-primary-emphasis fs-14px" aria-current="false">
+                            <i class="fa-regular fa-money-bill-1"></i><span> Доходы & Расходы</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" data-bs-target="#categories-dropdown" id="categories-link"
+                           class="nav-link d-flex justify-content-between rounded-bottom-0
+                           align-items-center mx-3 fs-14px text-white active" data-bs-toggle="collapse" role="button"
+                           aria-expanded="true" > <!-- true для автоматического раскрытия -->
+                            <span>Категории</span>
+                            <i class="fa-solid fa-angle-right dropdown-arrow"></i>
+                        </a>
+                        
+                        <div class="collapse show" id="categories-dropdown"> <!-- show для автоматического раскрытия -->
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a href="income.html" class="nav-link
+                                    rounded-0 mx-3 border border-2 border-bottom-0 border-primary active fs-14px">
+                                        Доходы
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="../expense/expense.html" class="nav-link
+                                    rounded-top-0 mx-3 border border-2 border-primary fs-14px">
+                                        Расходы
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mb-4">
+                <div class="current-amount text-primary-emphasis small fw-medium px-3">
+                    Баланс:
+                    <span id="current-amount" class="text-primary small fw-medium">500</span><span
+                        class="text-primary small fw-medium">$</span>
+                </div>
+                
+                <hr>
+                
+                <div class="mx-3 d-flex align-items-center mb-3">
+                    <!-- При загрузке картинки добавить классы ratio ratio-1x1 для #user-photo -->
+                    <div class=" bg-secondary-subtle rounded-circle text-secondary p-2
+                    d-flex align-items-center justify-content-center" id="user-photo" style="width: 36px; height: 36px;">
+                        <i class="fa-regular fa-user"></i>
+                        <!-- <img src="" alt="Фото юзера" class="img-fluid rounded-circle object-fit-cover"> -->
+                    </div>
+                    
+                    <div id="user-name" class="ms-3">
+                        RomanChernov
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col p-5">
+            <h1 class="text-primary-emphasis mt-5 mb-3 pb-2">Редактирование категории доходов</h1>
+            <div class="row row-cols-3">
+                <div class="col mt-3">
+                    <div class="card border-0">
+                        <div class="card-body p-0">
+                            <div class="col mb-3">
+                                <input type="text" class="form-control" id="categoryNameInput" placeholder="Название..."
+                                value="Зарплата">
+                                <span id="categoryNameInput-error" class="error invalid-feedback">Заполните поле</span>
+                            </div>
+                            <a href="income.html" class="btn btn-success">Сохранить</a>
+                            <a href="income.html" class="btn btn-danger">Отмена</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../../node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
+<script src="../../scripts/sidebar.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+<body class="d-flex align-items-center min-vh-100">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="pb-1 mb-5 col-5 mx-auto text-center"><img src="../../static/svg/logo.svg" alt="Lumincoin FINANCE"></div>
+            
+            <div class="card bg-transparent border-0">
+                <div class="card-body px-2">
+                    <p class="mb-3 pb-1 lh-sm fs-1 text-center fw-medium text-primary-emphasis">Создайте аккаунт</p>
+                    <div id="common-error" class="error invalid-feedback text-center mb-3">Неправильный email или пароль</div>
+                    
+                    <form>
+                        <div class="input-group mb-2 pb-1">
+                            <span class="input-group-text"><i class="fa-regular fa-user text-secondary"></i></span>
+                            <input type="text" class="form-control" id="fio" placeholder="ФИО">
+                            <span id="fio-error" class="error invalid-feedback">Введите корректное ФИО</span>
+                        </div>
+                        
+                        <div class="input-group mb-2 pb-1">
+                            <span class="input-group-text"><i class="fa-regular fa-envelope-open text-secondary"></i></span>
+                            <input type="email" class="form-control" id="email" placeholder="Электронная почта">
+                            <span id="email-error" class="error invalid-feedback">Введите корректный Email</span>
+                        </div>
+                        
+                        <div class="input-group mb-2 pb-1">
+                            <span class="input-group-text"><i class="fa fa-lock text-secondary"></i></span>
+                            <input type="password" class="form-control" id="password" placeholder="Пароль">
+                            <span id="password-error" class="error invalid-feedback">Заполните пароль</span>
+                        </div>
+                        
+                        <div class="input-group mb-2 pb-1">
+                            <span class="input-group-text"><i class="fa fa-lock text-secondary"></i></span>
+                            <input type="password" class="form-control" id="password-repeat" placeholder="Подтверждение пароля">
+                            <span id="password-repeat-error" class="error invalid-feedback">Пароль и поворение пароля должны совпадать</span>
+                        </div>
+                        
+                        <a href="../main.html" class="btn btn-primary w-100 mb-2">Войти</a>
+                        
+                        <span class="small">Уже есть аккаунт?</span>
+                        <a href="login.html" class="card-link small">Войдите в систему</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../../node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
+</body>
+</html>

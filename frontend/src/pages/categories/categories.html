@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+</head>
+<body class="min-vh-100">
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <div class="col-auto px-0 d-flex flex-column justify-content-between border-end border-secondary-subtle"
+             style="width: 220px;">
+            
+            <div class="mt-3">
+                <a href="javascript:void(0)" class="text-decoration-none d-block">
+                    <div class="col-6 ms-5 ps-1 pe-2 mt-4 mb-1 text-center">
+                        <img src="../../static/svg/logo.svg" alt="Lumincoin FINANCE">
+                    </div>
+                </a>
+                <hr>
+                
+                <ul class="nav nav-pills flex-column mt-5" id="sidebar-links">
+                    <li class="mt-2">
+                        <a href="../main.html" class="mx-3 nav-link fs-14px text-primary-emphasis"
+                           aria-current="page">
+                            <i class="fa-solid fa-house"></i><span> Главная</span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="javascript:void(0)" class="mx-3 nav-link fs-14px text-white active"
+                           aria-current="false">
+                            <i class="fa-regular fa-money-bill-1"></i><span> Доходы & Расходы</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" data-bs-target="#categories-dropdown" id="categories-link"
+                           class="nav-link d-flex justify-content-between rounded-bottom-0
+                           align-items-center mx-3 fs-14px text-primary-emphasis" data-bs-toggle="collapse"
+                           role="button"
+                           aria-expanded="false"> <!-- false для автоматического закрытия -->
+                            <span>Категории</span>
+                            <i class="fa-solid fa-angle-right dropdown-arrow"></i>
+                        </a>
+                        
+                        <div class="collapse" id="categories-dropdown"> <!-- нет show -->
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a href="../income/income.html" class="nav-link
+                                    rounded-0 mx-3 border border-2 border-bottom-0 border-primary active fs-14px">
+                                        Доходы
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="../expense/expense.html" class="nav-link
+                                    rounded-top-0 mx-3 border border-2 border-primary fs-14px">
+                                        Расходы
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mb-4">
+                <div class="current-amount text-primary-emphasis small fw-medium px-3">
+                    Баланс:
+                    <span id="current-amount" class="text-primary small fw-medium">500</span><span
+                        class="text-primary small fw-medium">$</span>
+                </div>
+                
+                <hr>
+                
+                <div class="mx-3 d-flex align-items-center mb-3">
+                    <!-- При загрузке картинки добавить классы ratio ratio-1x1 для #user-photo -->
+                    <div class=" bg-secondary-subtle rounded-circle text-secondary p-2
+                    d-flex align-items-center justify-content-center" id="user-photo"
+                         style="width: 36px; height: 36px;">
+                        <i class="fa-regular fa-user"></i>
+                        <!-- <img src="" alt="Фото юзера" class="img-fluid rounded-circle object-fit-cover"> -->
+                    </div>
+                    
+                    <div id="user-name" class="ms-3">
+                        RomanChernov
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col px-5 pt-5 pb-1">
+            <div class="card-body mb-4">
+                <h1 class="card-title text-primary-emphasis my-5 pb-2">Доходы и расходы</h1>
+                
+                <div class="col-3 mb-4 pb-3">
+                    <a href="category_create.html" class="btn btn-success px-3">Создать доход</a>
+                    
+                    <a href="category_create.html" class="btn btn-danger ms-2 px-3">Создать расход</a>
+                </div>
+                
+                <div class="period-selector pb-3">
+                    <div class="row">
+                        <div class="col-11 row" id="interval-settings">
+                            <div class="col">
+                                <button class="btn btn-outline-secondary w-100 active">Сегодня</button>
+                            </div>
+                            
+                            <div class="col">
+                                <button class="btn btn-outline-secondary w-100">Неделя</button>
+                            </div>
+                            
+                            <div class="col">
+                                <button class="btn btn-outline-secondary w-100">Месяц</button>
+                            </div>
+                            
+                            <div class="col">
+                                <button class="btn btn-outline-secondary w-100">Год</button>
+                            </div>
+                            
+                            <div class="col">
+                                <button class="btn btn-outline-secondary w-100">Все</button>
+                            </div>
+                            
+                            <div class="col">
+                                <button class="btn btn-outline-secondary w-100" id="interval-btn">Интервал</button>
+                            </div>
+                            
+                            
+                            <div class="col-2 align-items-center d-flex">
+                                <span class="fw-medium">c</span>
+                                <label class="form-label ms-3 mb-0 text-secondary text-decoration-underline" for="interval-start-date">Дата</label>
+                                <input type="date" class="form-control d-none" id="interval-start-date">
+                            </div>
+                            
+                            
+                            <div class="col-2 align-items-center d-flex">
+                                <span class="fw-medium">по</span>
+                                <label class="form-label ms-3 mb-0 text-secondary text-decoration-underline" for="interval-end-date">Дата</label>
+                                <input type="date" class="form-control d-none" id="interval-end-date">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col">
+                    <table class="table table-hover text-center align-items-center">
+                        <thead>
+                        <tr>
+                            <th class="text-primary-emphasis">№ операции</th>
+                            <th class="text-primary-emphasis">Тип</th>
+                            <th class="text-primary-emphasis">Категория</th>
+                            <th class="text-primary-emphasis">Сумма</th>
+                            <th class="text-primary-emphasis">Дата</th>
+                            <th class="text-primary-emphasis">Комментарий</th>
+                            <th class="text-primary-emphasis"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="fw-bold">1</td>
+                            <td class="text-success">доход</td>
+                            <td>зарплата</td>
+                            <td>500$</td>
+                            <td>11.09.2022</td>
+                            <td></td>
+                            <td class="text-end">
+                                <button class="btn btn-sm text-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                                
+                                <a href="category_edit.html" class="btn btn-sm text-dark me-1">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">2</td>
+                            <td class="text-danger">расход</td>
+                            <td>жильё</td>
+                            <td>2 500$</td>
+                            <td>12.09.2022</td>
+                            <td></td>
+                            <td class="text-end">
+                                <button class="btn btn-sm text-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                                
+                                <a href="category_edit.html" class="btn btn-sm text-dark me-1">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 justify-content-center">
+                <h1 class="modal-title fs-5 text-center text-dark-violet" id="staticBackdropLabel">Вы действительно хотите удалить
+                    операцию?</h1>
+            </div>
+            
+            <div class="modal-footer border-top-0 justify-content-center">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Да, удалить</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Не удалять</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../../node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
+<script src="../../scripts/sidebar.js"></script>
+<script src="../../scripts/interval.js"></script>
+
+</body>
+</html>
