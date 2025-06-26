@@ -1,38 +1,48 @@
 const path = require('path');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-    entry: './src/app.scripts',
+    entry: './src/app.js',
     mode: 'development',
     output: {
-        filename: 'app.scripts',
+        filename: 'main.js',
         path: path.resolve(__dirname, 'dist'),
+        // Это свойство для возможности загрузки app.js с любой страницы и при перезагрузке
+        publicPath: '/',
+        clean: true,
+    },
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
+        compress: true,
+        port: 9000,
+        // Перевод на главную страницу index.html
+        historyApiFallback: true,
+    },
+    module: {
+        rules: [
+            {
+                test: /\.scss$/i,
+                use: ["style-loader", "css-loader", "sass-loader",],
+            },
+        ],
     },
     plugins: [
         new HtmlWebpackPlugin({
-        template: "./src/login.html",
-    },
+            template: "./index.html",
+        }),
         new CopyPlugin({
             patterns: [
-                {
-                    from: "fonts/*",
-                    to: "[name][ext]",
-                    context: path.resolve(__dirname, "src")
-                },
+                {from: "./src/templates", to: "templates"},
+                {from: "./src/static/svg", to: "static/svg"},
+                {from: "./node_modules/bootstrap/dist/css/bootstrap.min.css", to: "./css"},
+                {from: "./node_modules/bootstrap/dist/js/bootstrap.min.js", to: "./js"},
+                {from: "./node_modules/@fortawesome/fontawesome-free/css/all.min.css", to: "./css"},
+                {from: "./node_modules/@fortawesome/fontawesome-free/js/all.min.js", to: "./js"},
+                {from: "./node_modules/chart.js/dist/chart.umd.js", to: "./js"},
             ],
         }),
-    )],
-    // module: {
-    //     rules: [
-    //         {
-    //             test: /\.scss$/i,
-    //             use: [
-    //                 // "style-loader", // Creates `style` nodes from JS strings
-    //                 // "css-loader", // Translates CSS into CommonJS
-    //                 "sass-loader", // Compiles Sass to CSS
-    //             ],
-    //         },
-    //     ],
-    // },
+    ],
 };

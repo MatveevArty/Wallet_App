@@ -1,0 +1,124 @@
+<!-- Оборачиваем вёрстку всей страницы в единый div для поддержания тона хорошей вёрстки-->
+<div class="dashboard">
+    <div class="card-body mb-5">
+        <h1 class="card-title text-primary-emphasis my-5 pb-2">Главная</h1>
+        
+        <div class="period-selector pb-5">
+            <div class="row">
+                <div class="col-11 row" id="interval-settings">
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100 active">Сегодня</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Неделя</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Месяц</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Год</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Все</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100" id="interval-btn">Интервал</button>
+                    </div>
+                    
+                    
+                    <div class="col-2 align-items-center d-flex">
+                        <span class="fw-medium">c</span>
+                        <label class="form-label ms-3 mb-0 text-secondary text-decoration-underline" for="interval-start-date">Дата</label>
+                        <input type="date" class="form-control d-none" id="interval-start-date">
+                    </div>
+                    
+                    
+                    <div class="col-2 align-items-center d-flex">
+                        <span class="fw-medium">по</span>
+                        <label class="form-label ms-3 mb-0 text-secondary text-decoration-underline" for="interval-end-date">Дата</label>
+                        <input type="date" class="form-control d-none" id="interval-end-date">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col my-5 px-0">
+            <div class="card h-100 rounded-0 border-0 border-end border-3">
+                <div class="card-header bg-white border-0">
+                    <h3 class="card-title text-center text-dark-violet mb-0">Доходы</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2 mb-4 ps-4 justify-content-center">
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-danger me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Red</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-warning me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Orange</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-warning bg-opacity-75 me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Yellow</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-success me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Green</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-primary me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Blue</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="incomeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col my-5 px-0">
+            <div class="card h-100 px-0 border-0">
+                <div class="card-header bg-white border-0">
+                    <h3 class="card-title text-center text-dark-violet mb-0">Расходы</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2 mb-4 ps-4 justify-content-center">
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-danger me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Red</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-warning me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Orange</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-warning bg-opacity-75 me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Yellow</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-success me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Green</span>
+                        </div>
+                        <div class="d-flex align-items-center mx-2">
+                            <div class="bg-primary me-2" style="width: 35px; height: 10px;"></div>
+                            <span class="fw-medium small">Blue</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
