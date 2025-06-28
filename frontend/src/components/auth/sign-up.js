@@ -21,11 +21,10 @@ export class SignUp {
             {element: this.passwordRepeatElement, options: {compareTo: this.passwordElement.value}},
         ];
 
-        this.formElement.addEventListener('submit', this.signUp.bind(this));
+        document.getElementById('process-button').addEventListener('click', this.signUp.bind(this));
     }
 
     findElements() {
-        this.formElement = document.getElementById('signup-form');
         this.nameElement = document.getElementById('name');
         this.lastnameElement = document.getElementById('lastname');
         this.emailElement = document.getElementById('email');
@@ -50,6 +49,7 @@ export class SignUp {
                 passwordRepeat: this.passwordRepeatElement.value
             });
 
+            // Сразу логиним нового пользователя
             if (signUpResult) {
                 const loginResult = await AuthService.logIn({
                     email: signUpResult.user.email,

@@ -8,7 +8,7 @@
                     <p class="mb-3 pb-1 lh-sm fs-1 text-center fw-medium text-primary-emphasis">Создайте аккаунт</p>
                     <div id="common-error" class="error invalid-feedback text-center mb-3">Неправильный email или пароль</div>
                     
-                    <form id="signup-form">
+                    <form>
                         <div class="input-group mb-2 pb-1">
                             <span class="input-group-text"><i class="fa-regular fa-user text-secondary"></i></span>
                             <input type="text" class="form-control" id="name" placeholder="Имя">
@@ -18,7 +18,7 @@
                         <div class="input-group mb-2 pb-1">
                             <span class="input-group-text"><i class="fa-regular fa-user text-secondary"></i></span>
                             <input type="text" class="form-control" id="lastname" placeholder="Фамилия">
-                            <span id="lastname-error" class="error invalid-feedback">Введите корректноую фамилию</span>
+                            <span id="lastname-error" class="error invalid-feedback">Введите корректную фамилию</span>
                         </div>
                         
                         <div class="input-group mb-2 pb-1">
@@ -30,7 +30,7 @@
                         <div class="input-group mb-2 pb-1">
                             <span class="input-group-text"><i class="fa fa-lock text-secondary"></i></span>
                             <input type="password" class="form-control" id="password" placeholder="Пароль">
-                            <span id="password-error" class="error invalid-feedback">Заполните пароль</span>
+                            <span id="password-error" class="error invalid-feedback">Заполните пароль. Минимум 8 символов, из которых хотя бы: 1 цифра, 1 маленькая буква, 1 большая буква</span>
                         </div>
                         
                         <div class="input-group mb-2 pb-1">
@@ -39,7 +39,7 @@
                             <span id="password-repeat-error" class="error invalid-feedback">Пароль и поворение пароля должны совпадать</span>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary w-100 mb-2">Войти</button>
+                        <button type="button" class="btn btn-primary w-100 mb-2" id="process-button">Зарегистрироваться</button>
                         
                         <span class="small">Уже есть аккаунт?</span>
                         <a href="/login" class="card-link small">Войдите в систему</a>

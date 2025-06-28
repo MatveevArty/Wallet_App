@@ -7,7 +7,7 @@ export class Logout {
 
         // Запрет на логаут, если не авторизован
         if (!AuthUtils.getAuthInfo(AuthUtils.accessTokenKey) || !AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey)) {
-            return this.openNewRoute('/auth/login');
+            return this.openNewRoute('/login');
         }
 
         this.logout().then();
@@ -19,6 +19,6 @@ export class Logout {
         });
 
         AuthUtils.removeAuthInfo();
-        this.openNewRoute('/auth/login');
+        this.openNewRoute('/login');
     }
 }

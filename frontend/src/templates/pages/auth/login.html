@@ -8,7 +8,7 @@
                     <p class="mb-3 pb-1 lh-sm fs-1 text-center fw-medium text-primary-emphasis">Вход</p>
                     <div id="common-error" class="error invalid-feedback text-center mb-3">Неправильный email или пароль</div>
                     
-                    <form id="login-form">
+                    <form>
                         <div class="input-group mb-2 pb-1">
                             <span class="input-group-text"><i class="fa-regular fa-envelope-open text-secondary"></i></span>
                             <input type="email" class="form-control" id="email" placeholder="Электронная почта">
@@ -26,10 +26,10 @@
                             <label class="form-check-label small ms-2" for="remember">Запомнить меня</label>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary w-100 mb-2">Войти</button>
+                        <button type="button" class="btn btn-primary w-100 mb-2" id="process-button">Войти</button>
                         
                         <span class="small">Ещё нет аккаунта?</span>
-                        <a href="/signup" class="card-link small">Пройдите регистрацию</a>
+                        <a href="/sign-up" class="card-link small">Пройдите регистрацию</a>
                     </form>
                 </div>
             </div>

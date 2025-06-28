@@ -18,11 +18,10 @@ export class Login {
             {element: this.emailElement, options: {pattern: /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/}},
         ];
 
-        this.formElement.addEventListener('submit', this.login.bind(this));
+        document.getElementById('process-button').addEventListener('click', this.login.bind(this));
     }
 
     findElements() {
-        this.formElement = document.getElementById('login-form');
         this.emailElement = document.getElementById('email');
         this.passwordElement = document.getElementById('password');
         this.rememberElement = document.getElementById('remember');
