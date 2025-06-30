@@ -8,6 +8,7 @@ import {Logout} from "./components/auth/logout";
 import {Sidebar} from "./components/sidebar";
 import {Interval} from "./components/interval";
 import {ChartBuild} from "./components/charts";
+import {IncomeList} from "./components/income/income-list";
 
 // Оставил импорты для импорта в 3 части проекта
 // import {CategoriesCreate} from "./components/categories/categories-create";
@@ -92,6 +93,16 @@ export class Router {
                     this.contentPageElement.classList.remove('align-items-center');
                 },
             },
+            {
+                route: '/income',
+                title: 'Доходы',
+                filePathTemplate: '/templates/pages/income/income-list.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new IncomeList(this.openNewRoute.bind(this));
+                    new Sidebar();
+                },
+            }
         ];
 
         this.initEvents();
