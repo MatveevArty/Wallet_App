@@ -8,21 +8,18 @@ import {Logout} from "./components/auth/logout";
 import {Sidebar} from "./components/sidebar";
 import {Interval} from "./components/interval";
 import {ChartBuild} from "./components/charts";
-import {IncomeList} from "./components/income/income-list";
 
-// Оставил импорты для импорта в 3 части проекта
+import {IncomeList} from "./components/income/income-list";
+import {IncomeCreate} from "./components/income/income-create";
+import {IncomeEdit} from "./components/income/income-edit";
+
+import {ExpenseList} from "./components/expense/expense-list";
+import {ExpenseCreate} from "./components/expense/expense-create";
+import {ExpenseEdit} from "./components/expense/expense-edit";
+
 // import {CategoriesCreate} from "./components/categories/categories-create";
-// import {CategoriesDelete} from "./components/categories/categories-delete";
 // import {CategoriesEdit} from "./components/categories/categories-edit";
 // import {CategoriesList} from "./components/categories/categories-list";
-// import {ExpenseCreate} from "./components/expense/expense-create";
-// import {ExpenseDelete} from "./components/expense/expense-delete";
-// import {ExpenseEdit} from "./components/expense/expense-edit";
-// import {ExpenseList} from "./components/expense/expense-list";
-// import {IncomeCreate} from "./components/income/income-create";
-// import {IncomeDelete} from "./components/income/income-delete";
-// import {IncomeEdit} from "./components/income/income-edit";
-// import {IncomeList} from "./components/income/income-list";
 
 export class Router {
     constructor() {
@@ -102,7 +99,52 @@ export class Router {
                     new IncomeList(this.openNewRoute.bind(this));
                     new Sidebar();
                 },
-            }
+            },
+            {
+                route: '/income/create',
+                title: 'Создание категории доходов',
+                filePathTemplate: '/templates/pages/income/income-create.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new IncomeCreate(this.openNewRoute.bind(this));
+                },
+            },
+            {
+                route: '/income/edit',
+                title: 'Редактирование категории доходов',
+                filePathTemplate: '/templates/pages/income/income-edit.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new IncomeEdit(this.openNewRoute.bind(this));
+                },
+            },
+            {
+                route: '/expense',
+                title: 'Расходы',
+                filePathTemplate: '/templates/pages/expense/expense-list.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new ExpenseList(this.openNewRoute.bind(this));
+                },
+            },
+            {
+                route: '/expense/create',
+                title: 'Создание категории расходов',
+                filePathTemplate: '/templates/pages/expense/expense-create.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new ExpenseCreate(this.openNewRoute.bind(this));
+                },
+            },
+            {
+                route: '/expense/edit',
+                title: 'Редактирование категории расходов',
+                filePathTemplate: '/templates/pages/expense/expense-edit.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new ExpenseEdit(this.openNewRoute.bind(this));
+                },
+            },
         ];
 
         this.initEvents();
