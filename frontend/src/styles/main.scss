@@ -1,7 +1,9 @@
-/* Поворот стрелки при раскрытом состоянии */
-.collapse.show ~ a .dropdown-arrow,
-[aria-expanded="true"] .dropdown-arrow {
+#categories-link:not(.collapsed) .dropdown-arrow {
     transform: rotate(90deg);
+}
+
+#sidebar-links a:hover {
+    background-color: lightskyblue;
 }
 
 /* Плавная анимация стрелки */
@@ -17,4 +19,21 @@
 /*  Цвет заголовков для названий категорий расходов и доходов */
 .text-dark-violet {
     color: #290661;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+#user-dropdown {
+    transition: opacity 0.2s ease;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+#user-dropdown a {
+    padding: 0.25rem 1rem;
+    text-decoration: none;
 }

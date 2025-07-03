@@ -9,7 +9,7 @@ export class ChartBuild {
         this.incomeChart = null;
         this.expenseChart = null;
         this.filter = {
-            period: 'today',
+            period: 'all',
             dateFrom: null,
             dateTo: null
         };

@@ -59,9 +59,8 @@ export class IncomeEdit {
                     console.log(response.error);
                     return response.redirect ? this.openNewRoute(response.redirect) : null;
                 }
-
-                return this.openNewRoute('/income');
             }
+            return this.openNewRoute('/income');
         }
     }
 }
