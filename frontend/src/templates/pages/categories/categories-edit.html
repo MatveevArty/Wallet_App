@@ -1,0 +1,41 @@
+<div class="col">
+    <h1 class="text-primary-emphasis mt-5 mb-3 pb-2">Редактирование дохода/расхода</h1>
+    <div class="row row-cols-3">
+        <div class="col mt-3">
+            <div class="card border-0">
+                <div class="card-body p-0">
+                    <div class="col mb-2">
+                        <select class="form-control" id="category-select">
+                            <option value="0" disabled selected hidden>Тип..</option>
+                            <option value="income">Доход</option>
+                            <option value="expense">Расход</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col mb-2">
+                        <select class="form-control" id="category-item-select"></select>
+                        <span id="category-item-select-error" class="error invalid-feedback">Заполните поле</span>
+                    </div>
+                    
+                    <div class="col mb-2">
+                        <input type="number" class="form-control" id="category-item-sum-input" placeholder="Сумма в $...">
+                        <span id="category-item-sum-input-error" class="error invalid-feedback">Заполните поле</span>
+                    </div>
+                    
+                    <div class="col mb-2">
+                        <input type="date" class="form-control" id="category-item-date-input" placeholder="Дата...">
+                        <span id="category-item-date-input-error" class="error invalid-feedback">Заполните поле</span>
+                    </div>
+                    
+                    <div class="col mb-3">
+                        <input type="text" class="form-control" id="category-item-comment-input" placeholder="Комментарий...">
+                        <span id="category-item-comment-input-error" class="error invalid-feedback">Заполните поле</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-success" id="categoryCreateBtn">Создать</button>
+                    <a href="/categories" class="btn btn-danger">Отмена</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

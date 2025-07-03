@@ -18,8 +18,8 @@ import {ExpenseCreate} from "./components/expense/expense-create";
 import {ExpenseEdit} from "./components/expense/expense-edit";
 
 import {CategoriesList} from "./components/categories/categories-list";
-// import {CategoriesCreate} from "./components/categories/categories-create";
-// import {CategoriesEdit} from "./components/categories/categories-edit";
+import {CategoriesCreate} from "./components/categories/categories-create";
+import {CategoriesEdit} from "./components/categories/categories-edit";
 
 export class Router {
     constructor() {
@@ -145,7 +145,6 @@ export class Router {
                     new ExpenseEdit(this.openNewRoute.bind(this));
                 },
             },
-
             {
                 route: '/categories',
                 title: 'Доходы и расходы',
@@ -153,6 +152,24 @@ export class Router {
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new CategoriesList(this.openNewRoute.bind(this));
+                },
+            },
+            {
+                route: '/categories/create',
+                title: 'Создание дохода/расхода',
+                filePathTemplate: '/templates/pages/categories/categories-create.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new CategoriesCreate(this.openNewRoute.bind(this));
+                },
+            },
+            {
+                route: '/categories/edit',
+                title: 'Редактирование дохода/расхода',
+                filePathTemplate: '/templates/pages/categories/categories-edit.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new CategoriesEdit(this.openNewRoute.bind(this));
                 },
             },
         ];

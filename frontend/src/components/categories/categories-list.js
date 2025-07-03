@@ -105,7 +105,7 @@ export class CategoriesList {
                     <button class="btn btn-sm text-dark" data-id="${operation.id}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         <i class="fa-solid fa-trash"></i>
                     </button>
-                    <a href="/categories/edit?id=${operation.id}&type=${operation.type}" class="btn btn-sm text-dark me-1">
+                    <a href="/categories/edit?id=${operation.id}" class="btn btn-sm text-dark me-1">
                         <i class="fa-solid fa-pencil"></i>
                     </a>
                 </td>
@@ -130,7 +130,7 @@ export class CategoriesList {
             const response = await OperationService.deleteOperation(operationId);
 
             if (response.error) {
-                alert(response.error);
+                // alert(response.error);
                 return response.redirect ? this.openNewRoute(response.redirect) : null;
             }
 
