@@ -11,8 +11,8 @@ export class OperationService {
 
         const { period, dateFrom, dateTo } = filter;
         const result = await HttpUtils.request(dateFrom && dateTo ?
-            'operations?period=' + period + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo :
-            'operations?period=' + period);
+            '/operations?period=' + period + '&dateFrom=' + dateFrom + '&dateTo=' + dateTo :
+            '/operations?period=' + period);
 
         if (!result.response || result.error || result.redirect) {
             returnObject.error = 'Возникла ошибка при запросе операций';

@@ -1,0 +1,95 @@
+<div class="col">
+    <div class="card-body mb-4">
+        <h1 class="card-title text-primary-emphasis my-5 pb-2">Доходы и расходы</h1>
+        
+        <div class="col-3 mb-4 pb-3">
+            <a href="/categories/create?category=income" class="btn btn-success px-3">Создать доход</a>
+            
+            <a href="/categories/create?category=expense" class="btn btn-danger ms-2 px-3">Создать расход</a>
+        </div>
+        
+        <div class="period-selector pb-3">
+            <div class="row">
+                <div class="col-11 row" id="interval-settings">
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Сегодня</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Неделя</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Месяц</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100">Год</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100 active">Все</button>
+                    </div>
+                    
+                    <div class="col">
+                        <button class="btn btn-outline-secondary w-100" id="interval-btn">Интервал</button>
+                    </div>
+                    
+                    
+                    <div class="col-2 align-items-center d-flex">
+                        <span class="fw-medium">c</span>
+                        <label class="form-label ms-3 mb-0 text-secondary text-decoration-underline"
+                               for="interval-start-date" id="interval-start-date-label">Дата</label>
+                        <input type="date" class="form-control d-none" id="interval-start-date">
+                    </div>
+                    
+                    
+                    <div class="col-2 align-items-center d-flex">
+                        <span class="fw-medium">по</span>
+                        <label class="form-label ms-3 mb-0 text-secondary text-decoration-underline"
+                               for="interval-end-date" id="interval-end-date-label">Дата</label>
+                        <input type="date" class="form-control d-none" id="interval-end-date">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            <table class="table table-hover text-center align-items-center">
+                <thead>
+                <tr>
+                    <th class="text-primary-emphasis">№ операции</th>
+                    <th class="text-primary-emphasis">Тип</th>
+                    <th class="text-primary-emphasis">Категория</th>
+                    <th class="text-primary-emphasis">Сумма</th>
+                    <th class="text-primary-emphasis">Дата</th>
+                    <th class="text-primary-emphasis">Комментарий</th>
+                    <th class="text-primary-emphasis"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 justify-content-center">
+                    <h1 class="modal-title fs-5 text-center text-dark-violet" id="staticBackdropLabel">Вы действительно хотите удалить
+                        операцию?</h1>
+                </div>
+                
+                <div class="modal-footer border-top-0 justify-content-center">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="confirmDeleteBtn">Да, удалить</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Не удалять</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

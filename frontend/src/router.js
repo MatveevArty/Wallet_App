@@ -17,9 +17,9 @@ import {ExpenseList} from "./components/expense/expense-list";
 import {ExpenseCreate} from "./components/expense/expense-create";
 import {ExpenseEdit} from "./components/expense/expense-edit";
 
+import {CategoriesList} from "./components/categories/categories-list";
 // import {CategoriesCreate} from "./components/categories/categories-create";
 // import {CategoriesEdit} from "./components/categories/categories-edit";
-// import {CategoriesList} from "./components/categories/categories-list";
 
 export class Router {
     constructor() {
@@ -143,6 +143,16 @@ export class Router {
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new ExpenseEdit(this.openNewRoute.bind(this));
+                },
+            },
+
+            {
+                route: '/categories',
+                title: 'Доходы и расходы',
+                filePathTemplate: '/templates/pages/categories/categories-list.html',
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new CategoriesList(this.openNewRoute.bind(this));
                 },
             },
         ];
