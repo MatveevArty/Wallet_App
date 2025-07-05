@@ -3,15 +3,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-    entry: './src/app.js',
+    entry: './src/app.ts',
+    devtool: 'inline-source-map',
     mode: 'development',
-    output: {
-        filename: 'app.js',
-        path: path.resolve(__dirname, 'dist'),
-        // Это свойство для возможности загрузки app.js с любой страницы и при перезагрузке
-        publicPath: '/',
-        clean: true,
-    },
     devServer: {
         static: {
             directory: path.join(__dirname, 'dist'),
@@ -27,7 +21,22 @@ module.exports = {
                 test: /\.scss$/i,
                 use: ["style-loader", "css-loader", "sass-loader",],
             },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
         ],
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+    },
+    output: {
+        filename: 'app.js',
+        path: path.resolve(__dirname, 'dist'),
+        // Это свойство для возможности загрузки app.js с любой страницы и при перезагрузке
+        publicPath: '/',
+        clean: true,
     },
     plugins: [
         new HtmlWebpackPlugin({
