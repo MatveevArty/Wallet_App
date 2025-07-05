@@ -19,13 +19,26 @@ import {ExpenseEdit} from "./components/expense/expense-edit";
 import {CategoriesList} from "./components/categories/categories-list";
 import {CategoriesCreate} from "./components/categories/categories-create";
 import {CategoriesEdit} from "./components/categories/categories-edit";
+
 import {BalanceService} from "./services/balance-service";
 import {UserMenu} from "./user-menu";
 
+import {RouteType} from "./types/route.type";
+import {BalanceType} from "./types/balance.type";
+import {DefaultErrorType} from "./types/default-error.type";
+import {UserInfoType} from "./types/token.type";
+import bootstrap from "bootstrap";
+
 export class Router {
+    private readonly titlePageElement: HTMLElement | null;
+    readonly contentPageElement: HTMLElement | null;
+    private routes: RouteType[];
+    private userName: string;
+
     constructor() {
         this.titlePageElement = document.getElementById('page-title');
         this.contentPageElement = document.getElementById('page-content');
+        this.userName = '';
 
         this.routes = [
             {
@@ -44,30 +57,38 @@ export class Router {
                 route: '/sign-up',
                 title: 'Регистрация',
                 filePathTemplate: '/templates/pages/auth/sign-up.html',
-                useLayout: false,
+                useLayout: '',
                 load: () => {
-                    this.contentPageElement.classList.add('d-flex');
-                    this.contentPageElement.classList.add('align-items-center');
+                    if (this.contentPageElement) {
+                        this.contentPageElement.classList.add('d-flex');
+                        this.contentPageElement.classList.add('align-items-center');
+                    }
                     new SignUp(this.openNewRoute.bind(this));
                 },
                 unload: () => {
-                    this.contentPageElement.classList.remove('d-flex');
-                    this.contentPageElement.classList.remove('align-items-center');
+                    if (this.contentPageElement) {
+                        this.contentPageElement.classList.remove('d-flex');
+                        this.contentPageElement.classList.remove('align-items-center');
+                    }
                 }
             },
             {
                 route: '/login',
                 title: 'Авторизация',
                 filePathTemplate: '/templates/pages/auth/login.html',
-                useLayout: false,
+                useLayout: '',
                 load: () => {
-                    this.contentPageElement.classList.add('d-flex');
-                    this.contentPageElement.classList.add('align-items-center');
+                    if (this.contentPageElement) {
+                        this.contentPageElement.classList.add('d-flex');
+                        this.contentPageElement.classList.add('align-items-center');
+                    }
                     new Login(this.openNewRoute.bind(this));
                 },
                 unload: () => {
-                    this.contentPageElement.classList.remove('d-flex');
-                    this.contentPageElement.classList.remove('align-items-center');
+                    if (this.contentPageElement) {
+                        this.contentPageElement.classList.remove('d-flex');
+                        this.contentPageElement.classList.remove('align-items-center');
+                    }
                 },
             },
             {
@@ -80,14 +101,18 @@ export class Router {
                 route: '/404',
                 title: 'Страница не найдена',
                 filePathTemplate: '/templates/pages/404.html',
-                useLayout: false,
+                useLayout: '',
                 load: () => {
-                    this.contentPageElement.classList.add('d-flex');
-                    this.contentPageElement.classList.add('align-items-center');
+                    if (this.contentPageElement) {
+                        this.contentPageElement.classList.add('d-flex');
+                        this.contentPageElement.classList.add('align-items-center');
+                    }
                 },
                 unload: () => {
-                    this.contentPageElement.classList.remove('d-flex');
-                    this.contentPageElement.classList.remove('align-items-center');
+                    if (this.contentPageElement) {
+                        this.contentPageElement.classList.remove('d-flex');
+                        this.contentPageElement.classList.remove('align-items-center');
+                    }
                 },
             },
             {
@@ -185,53 +210,35 @@ export class Router {
         this.initEvents();
     }
 
-    initEvents() {
+    private initEvents(): void {
         window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
         window.addEventListener('popstate', this.activateRoute.bind(this));
-        // document.addEventListener('click', this.clickHandler.bind(this));
     }
 
-    async openNewRoute(url) {
-        const currentRoute = window.location.pathname;
+    public async openNewRoute(url: string): Promise<void> {
+        const currentRoute: string = window.location.pathname;
         history.pushState({}, '', url);
-        await this.activateRoute(null, currentRoute);
-    }
-
-    async clickHandler(e) {
-
-        let element = null;
-        if (e.target.nodeName === 'A') {
-            element = e.target;
-        } else if (e.target.parentNode.nodeName === 'A') {
-            element = e.target.parentNode;
-        }
-        if (element) {
-            e.preventDefault();
-
-            const currentRoute = window.location.pathname;
-            const url = element.href.replace(window.location.origin, '');
-            if (!url || (currentRoute === url.replace('#', '')) || url.startsWith('javascript:void(0)')) {
-                return;
-            }
-
-            await this.openNewRoute(url);
+        if (currentRoute) {
+            await this.activateRoute(null, currentRoute);
         }
     }
 
-    async activateRoute(e, oldRoute = null) {
+    private async activateRoute(e: any, oldRoute: string | null = null): Promise<void> {
         if (oldRoute) {
-            const currentRoute = this.routes.find(item => item.route === oldRoute);
+            const currentRoute: RouteType | undefined = this.routes.find(item => item.route === oldRoute);
 
             // Удаление необходимых js файлов со страницы
-            if (currentRoute.scripts && currentRoute.scripts.length > 0) {
-                currentRoute.scripts.forEach(script => {
-                    document.querySelector(`script[src='/js/${script}']`).remove();
-                })
+            if (currentRoute) {
+                if (currentRoute.scripts && currentRoute.scripts.length > 0) {
+                    currentRoute.scripts.forEach(script => {
+                        document.querySelector(`script[src='/js/${script}']`)?.remove();
+                    })
+                }
             }
         }
 
-        const urlRoute = window.location.pathname;
-        const newRoute = this.routes.find(item => item.route === urlRoute);
+        const urlRoute: string = window.location.pathname;
+        const newRoute: RouteType | undefined = this.routes.find(item => item.route === urlRoute);
 
         if (newRoute) {
             // Подключение необходимых js файлов на текущую страницу
@@ -243,33 +250,47 @@ export class Router {
 
             // Присвоение соответствующего заголовка страницы
             if (newRoute.title) {
-                this.titlePageElement.innerText = newRoute.title + ' | LumincoinFinance';
+                if (this.titlePageElement) {
+                    this.titlePageElement.innerText = newRoute.title + ' | LumincoinFinance';
+                }
             }
 
             // Присовение соответствующего контента страница
             if (newRoute.filePathTemplate) {
-                let contentBlock = this.contentPageElement;
-                if (newRoute.useLayout) {
+                let contentBlock: HTMLElement | null = this.contentPageElement;
+                if (newRoute.useLayout && this.contentPageElement && contentBlock) {
                     this.contentPageElement.innerHTML =
                         await fetch(newRoute.useLayout).then(response => response.text());
                     contentBlock = document.getElementById('content-layout');
 
-                    this.balanceElement = document.getElementById('current-amount');
-                    const userBalance = await BalanceService.getBalance();
-                    this.balanceElement.innerText = userBalance.balance;
+                    const balanceElement: HTMLElement | null = document.getElementById('current-amount');
+                    const userBalance: BalanceType | DefaultErrorType = await BalanceService.getBalance();
 
-                    this.profileNameElement = document.getElementById('profile-name');
-                    if (!this.userName) {
-                        const userInfo = AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey) ? JSON.parse(AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey)) : '';
-                        if (userInfo && userInfo.name) {
-                            this.userName = userInfo.name;
+                    if (balanceElement && userBalance) {
+                        if ((userBalance as BalanceType).balance !== undefined) {
+                            balanceElement.innerText = userBalance.balance.toString();
                         }
                     }
-                    this.profileNameElement.innerText = this.userName;
+
+                    const profileNameElement: HTMLElement | null  = document.getElementById('profile-name');
+
+                    if (!this.userName) {
+                        const userInfoName: string | null | undefined = AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey) ?
+                            (AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey) as UserInfoType).name : '';
+                        if (userInfoName) {
+                            this.userName = userInfoName;
+                        }
+                    }
+
+                    if (profileNameElement) {
+                        profileNameElement.innerText = this.userName;
+                    }
                     this.activateMenuItem(newRoute);
                 }
-                contentBlock.innerHTML =
-                    await fetch(newRoute.filePathTemplate).then(response => response.text());
+                if (contentBlock) {
+                    contentBlock.innerHTML =
+                        await fetch(newRoute.filePathTemplate).then(response => response.text());
+                }
             }
 
             if (newRoute.load && typeof newRoute.load === 'function') {
@@ -277,63 +298,85 @@ export class Router {
             }
         } else {
             history.pushState({}, '', '/404');
-            await this.activateRoute();
+            await this.activateRoute(null, null);
         }
     }
 
-    activateMenuItem(route) {
+    private activateMenuItem(route: RouteType): void {
         // Сбрасываем все активные состояния
-        const sidebarLinks = document.querySelectorAll('#sidebar-links a');
-        const categoriesLinks = document.querySelectorAll('#categories-dropdown a');
-        const categoriesMainLink = document.getElementById('categories-link');
-        const categoriesDropdown = document.getElementById('categories-dropdown');
+        const sidebarLinks: NodeListOf<Element> = document.querySelectorAll('#sidebar-links a');
+        const categoriesLinks: NodeListOf<Element> = document.querySelectorAll('#categories-dropdown a');
+        const categoriesMainLink: HTMLElement | null = document.getElementById('categories-link');
+        const categoriesDropdown: HTMLElement | null = document.getElementById('categories-dropdown');
 
-        sidebarLinks.forEach(link => {
+        sidebarLinks.forEach((link: Element) => {
             link.classList.remove('active', 'text-white');
             link.classList.add('text-primary-emphasis');
         });
 
-        categoriesLinks.forEach(link => {
+        categoriesLinks.forEach((link: Element) => {
             link.classList.remove('active', 'text-white');
             link.classList.add('text-primary');
         });
 
-        categoriesMainLink.classList.remove('active', 'text-white');
-        categoriesMainLink.classList.add('text-primary-emphasis');
+        if (categoriesMainLink) {
+            categoriesMainLink.classList.remove('active', 'text-white');
+            categoriesMainLink.classList.add('text-primary-emphasis');
 
-        // Управление выпадающим меню
-        const bsCollapse = bootstrap.Collapse.getInstance(categoriesDropdown) ||
-            new bootstrap.Collapse(categoriesDropdown, { toggle: false });
+            // Управление выпадающим меню
+            if (categoriesDropdown) {
+                const bsCollapse: bootstrap.Collapse = bootstrap.Collapse.getInstance(categoriesDropdown) ||
+                    new bootstrap.Collapse(categoriesDropdown, {toggle: false});
 
-        // Активация в зависимости от текущего маршрута
-        switch(route.route) {
-            case '/':
-                this.setActiveLink(document.querySelector('#sidebar-links a[href="/"]'));
-                bsCollapse.hide();
-                break;
+                // Активация в зависимости от текущего маршрута
+                switch (route.route) {
+                    case '/':
+                        let linkMain: Element | null = document.querySelector('#sidebar-links a[href="/"]');
+                        if (linkMain) {
+                            this.setActiveLink(linkMain);
+                        }
+                        bsCollapse.hide();
+                        break;
 
-            case '/categories':
-                this.setActiveLink(document.querySelector('#sidebar-links a[href="/categories"]'));
-                bsCollapse.hide();
-                break;
+                    case '/categories':
+                        let linkCategories: Element | null = document.querySelector('#sidebar-links a[href="/categories"]');
+                        if (linkCategories) {
+                            this.setActiveLink(linkCategories);
+                        }
+                        bsCollapse.hide();
+                        break;
 
-            case '/income':
-                this.setActiveLink(categoriesMainLink);
-                this.setActiveLink(document.querySelector('#categories-dropdown a[href="/income"]'));
-                document.querySelector('#categories-dropdown a[href="/expense"]').classList.add('border', 'border-2', 'border-primary');
-                bsCollapse.show();
-                break;
+                    case '/income':
+                        this.setActiveLink(categoriesMainLink);
+                        let linkIncome: Element | null = document.querySelector('#categories-dropdown a[href="/income"]');
+                        if (linkIncome) {
+                            this.setActiveLink(linkIncome);
+                        }
+                        let linkExpenseNotActive: Element | null = document.querySelector('#categories-dropdown a[href="/expense"]');
+                        if (linkExpenseNotActive) {
+                            linkExpenseNotActive.classList.add('border', 'border-2', 'border-primary');
+                        }
+                        bsCollapse.show();
+                        break;
 
-            case '/expense':
-                this.setActiveLink(categoriesMainLink);
-                this.setActiveLink(document.querySelector('#categories-dropdown a[href="/expense"]'));
-                document.querySelector('#categories-dropdown a[href="/income"]').classList.add('border', 'border-2', 'border-primary');
-                bsCollapse.show();
-                break;
+                    case '/expense':
+                        this.setActiveLink(categoriesMainLink);
+                        let linkExpense: Element | null = document.querySelector('#categories-dropdown a[href="/expense"]');
+                        if (linkExpense) {
+                            this.setActiveLink(linkExpense);
+                        }
+                        let linkIncomeNotActive: Element | null = document.querySelector('#categories-dropdown a[href="/income"]');
+                        if (linkIncomeNotActive) {
+                            linkIncomeNotActive.classList.add('border', 'border-2', 'border-primary');
+                        }
+                        bsCollapse.show();
+                        break;
+                }
+            }
         }
     }
 
-    setActiveLink(link) {
+    private setActiveLink(link: Element): void {
         if (!link) return;
 
         if (link.id === 'categories-link') {

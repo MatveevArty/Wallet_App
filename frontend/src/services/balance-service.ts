@@ -1,25 +1,24 @@
 import {HttpUtils} from "../utils/http-utils";
+import {BalanceType} from "../types/balance.type";
+import {DefaultErrorType} from "../types/default-error.type";
 
 export class BalanceService {
 
-    static async getBalance() {
+    public static async getBalance(): Promise<BalanceType> {
         const returnObject = {
             error: false,
-            redirect: null,
-            balance: null,
+            message: '',
+            balance: 0,
         };
 
-        const result = await HttpUtils.request('/balance')
+        const result: BalanceType | DefaultErrorType = await HttpUtils.request('/balance');
 
-        if (!result.response || result.error || result.redirect) {
-            returnObject.error = 'Возникла ошибка при запросе баланса';
-            // Перенаправление пользователя в случае редиректа в ответе запроса
-            if (result.redirect) {
-                returnObject.redirect = result.redirect;
-            }
+        if (result && ((result as DefaultErrorType).error || (result as DefaultErrorType).message)) {
+            returnObject.message = 'Возникла ошибка при запросе баланса';
+            returnObject.error = true;
             return returnObject;
         }
-        returnObject.balance = result.response.balance;
+        returnObject.balance = (result as BalanceType).balance;
         return returnObject;
     }
 }

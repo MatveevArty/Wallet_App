@@ -1,27 +1,32 @@
 import {config} from "../config/config";
 import {AuthUtils} from "./auth-utils";
+import {HttpMethodEnum} from "../enums/http-method.enum";
+import {TokenEnum} from "../enums/token.enum";
 
 export class HttpUtils {
-    static async request(url, method = "GET", useAuth = true, body = null) {
+    public static async request(url: string, method: HttpMethodEnum = HttpMethodEnum.get, useAuth: boolean = true, body: string | null = null): Promise<any> {
         const result = {
             error: false,
-            response: null
+            response: null,
+            redirect: '',
         };
 
         const params = {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
+                'Accept': 'application/json',
+                'x-auth-token' : 'no-token',
+            },
+            body: '',
         };
 
-        let token = null;
+        let accessToken: string | undefined | null;
 
         if (useAuth) {
-            token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
-            if (token) {
-                params.headers['x-auth-token'] = token;
+            accessToken = AuthUtils.getAuthInfo(TokenEnum.accessTokenKey) as string | undefined | null;
+            if (accessToken) {
+                params.headers['x-auth-token'] = accessToken;
             }
         }
 
@@ -42,7 +47,7 @@ export class HttpUtils {
             result.error = true;
 
             if (useAuth && response.status === 401) {
-                if (!token) {
+                if (!accessToken) {
                     result.redirect = '/auth/login';
                 } else {
                     const updateTokenResult = await AuthUtils.updateRefreshToken();

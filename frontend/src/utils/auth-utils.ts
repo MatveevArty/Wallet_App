@@ -1,43 +1,52 @@
 import {config} from "../config/config";
+import {TokenEnum} from "../enums/token.enum";
+import {TokenType, UserInfoType} from "../types/token.type";
+import {HttpMethodEnum} from "../enums/http-method.enum";
 
 export class AuthUtils {
-    static accessTokenKey = 'accessToken';
-    static refreshTokenKey = 'refreshToken';
-    static userInfoTokenKey = 'userInfo';
+    public static accessTokenKey: string = 'accessToken';
+    public static refreshTokenKey: string = 'refreshToken';
+    public static userInfoTokenKey: string = 'userInfo';
 
-    static setAuthInfo(accessToken, refreshToken, userInfo = null) {
-        localStorage.setItem(this.accessTokenKey, accessToken);
-        localStorage.setItem(this.refreshTokenKey, refreshToken);
+    public static setAuthInfo(accessToken: string, refreshToken: string, userInfo: UserInfoType | null = null): void {
+        localStorage.setItem(TokenEnum.accessTokenKey, accessToken);
+        localStorage.setItem(TokenEnum.refreshTokenKey, refreshToken);
         if (userInfo) {
-            localStorage.setItem(this.userInfoTokenKey, JSON.stringify(userInfo));
+            localStorage.setItem(TokenEnum.userInfoTokenKey, JSON.stringify(userInfo));
         }
     }
 
-    static removeAuthInfo() {
-        localStorage.removeItem(this.accessTokenKey);
-        localStorage.removeItem(this.refreshTokenKey);
-        localStorage.removeItem(this.userInfoTokenKey);
+    public static removeAuthInfo(): void {
+        localStorage.removeItem(TokenEnum.accessTokenKey);
+        localStorage.removeItem(TokenEnum.refreshTokenKey);
+        localStorage.removeItem(TokenEnum.userInfoTokenKey);
     }
 
-    static getAuthInfo(key = null) {
+    public static getAuthInfo(key: string | null = null): string | TokenType | UserInfoType | null | undefined {
         // Возвращаем конкретный элемент при его передачи в вызове метода getAuthInfo, иначе возвращаем все три элемента
-        if (key && [this.accessTokenKey, this.refreshTokenKey, this.userInfoTokenKey].includes(key)) {
-            return localStorage.getItem(key);
+        if (key) {
+            if (key === TokenEnum.accessTokenKey) {
+                return localStorage.getItem(TokenEnum.accessTokenKey);
+            } else if (key === TokenEnum.refreshTokenKey) {
+                return localStorage.getItem(TokenEnum.refreshTokenKey);
+            } else if (key === TokenEnum.userInfoTokenKey) {
+                return localStorage.getItem(TokenEnum.userInfoTokenKey);
+            }
         } else {
             return {
-                [this.accessTokenKey]: localStorage.getItem(this.accessTokenKey),
-                [this.refreshTokenKey]: localStorage.getItem(this.refreshTokenKey),
-                [this.userInfoTokenKey]: localStorage.getItem(this.userInfoTokenKey),
+                [TokenEnum.accessTokenKey]: localStorage.getItem(TokenEnum.accessTokenKey),
+                [TokenEnum.refreshTokenKey]: localStorage.getItem(TokenEnum.refreshTokenKey),
+                [TokenEnum.userInfoTokenKey]: JSON.parse(localStorage.getItem(TokenEnum.refreshTokenKey) as string) as UserInfoType,
             }
         }
     }
 
-    static async updateRefreshToken() {
-        let result = false;
-        const refreshToken = this.getAuthInfo(this.refreshTokenKey);
+    public static async updateRefreshToken(): Promise<boolean> {
+        let result: boolean = false;
+        const refreshToken: string | null | undefined = this.getAuthInfo(TokenEnum.refreshTokenKey) as string | null | undefined;
         if (refreshToken) {
-            const response = await fetch(config.api + '/refresh', {
-                method: 'POST',
+            const response: Response = await fetch(config.api + '/refresh', {
+                method: HttpMethodEnum.post,
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'

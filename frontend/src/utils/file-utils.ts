@@ -1,21 +1,13 @@
 export class FileUtils {
-    static loadPageScript(src) {
+    public static loadPageScript(src: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            const script = document.createElement("script");
+            const script: HTMLScriptElement = document.createElement("script");
             script.src = src;
             script.onload = () => {
                 resolve('Script loaded: ' + src);
             };
-            script.onerror = () => reject(new Error('Script error for: ' + src));  // можно укоротить запись
+            script.onerror = () => reject(new Error('Script error for: ' + src));
             document.body.appendChild(script);
         })
-    }
-
-    static loadPageStyle(src, insertBeforeElement) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = src;
-        link.type = 'text/css';
-        document.head.insertBefore(link, insertBeforeElement);
     }
 }
