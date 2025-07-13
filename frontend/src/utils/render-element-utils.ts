@@ -1,6 +1,9 @@
-export class RenderElementUtils {
+import {IdTitleDefaultType} from "../types/id-title-default.type";
 
-    static renderElementList(item, href) {
+export class RenderElementUtils {
+    private static cardElement: HTMLDivElement | null = null;
+
+    public static renderElementList(item: IdTitleDefaultType, href: string): HTMLDivElement {
         // <div class="col mt-3"></div>
         this.cardElement = document.createElement('div');
         this.cardElement.classList.add('col', 'mt-3');
@@ -34,13 +37,13 @@ export class RenderElementUtils {
         buttonDelete.innerText = 'Удалить';
         buttonDelete.setAttribute('data-bs-toggle', 'modal');
         buttonDelete.setAttribute('data-bs-target', '#deleteModal');
-        buttonDelete.setAttribute('data-id', item.id);
+        buttonDelete.setAttribute('data-id', item.id.toString());
         cardBodyElement.appendChild(buttonDelete);
 
         return this.cardElement;
     }
 
-    static renderElementAddBtn(href) {
+    public static renderElementAddBtn(href: string): HTMLDivElement {
         // <div class="col mt-3"></div>
         this.cardElement = document.createElement('div');
         this.cardElement.classList.add('col', 'mt-3');

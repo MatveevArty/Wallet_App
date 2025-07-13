@@ -4,7 +4,8 @@ import {HttpMethodEnum} from "../enums/http-method.enum";
 import {TokenEnum} from "../enums/token.enum";
 
 export class HttpUtils {
-    public static async request(url: string, method: HttpMethodEnum = HttpMethodEnum.get, useAuth: boolean = true, body: string | null = null): Promise<any> {
+    public static async request(url: string, method: HttpMethodEnum = HttpMethodEnum.get,
+                                useAuth: boolean = true, body: Object = {}): Promise<any> {
         const result = {
             error: false,
             response: null,

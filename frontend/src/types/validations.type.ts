@@ -1,5 +1,5 @@
 export type ValidationsType = {
-    element: HTMLInputElement | null;
+    element: HTMLInputElement | HTMLSelectElement | null;
     options?: ValidationOptionsType,
 }
 

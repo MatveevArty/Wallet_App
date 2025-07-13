@@ -1,17 +1,27 @@
-import {OperationService} from "../../services/operation-service.js";
-import {DateUtils} from "../../utils/date-utils.js";
+import {OperationService} from "../../services/operation-service";
+import {DateFilterType} from "../../types/date-filter.type";
+import {NewRouteCallbackType} from "../../types/new-route-callback.type";
+import {OperationType} from "../../types/operation.type";
+import {PeriodEnum, PeriodKey, PeriodMap} from "../../enums/period.enum";
+import {DateUtils} from "../../utils/date-utils";
 
 export class CategoriesList {
-    constructor(openNewRoute) {
-        this.openNewRoute = openNewRoute;
+    readonly openNewRoute: NewRouteCallbackType;
+    private intervalButtons: NodeListOf<HTMLButtonElement> | HTMLButtonElement | null = null;
+    private intervalStartDate: HTMLButtonElement | HTMLElement | null = null;
+    private intervalEndDate: HTMLButtonElement| HTMLElement | null = null;
+    private intervalBtn: HTMLButtonElement | HTMLElement | null = null;
+    readonly filter: DateFilterType | null = null;
 
-        this.intervalButtons = null;
-        this.intervalStartDate = null;
-        this.intervalEndDate = null;
-        this.intervalBtn = null;
+    constructor(openNewRoute: NewRouteCallbackType) {
+        this.openNewRoute = openNewRoute;
+        this.intervalButtons = document.querySelectorAll('#interval-settings button');
+        this.intervalStartDate = document.getElementById('interval-start-date');
+        this.intervalEndDate = document.getElementById('interval-end-date');
+        this.intervalBtn = document.getElementById('interval-btn');
 
         this.filter = {
-            period: 'all',
+            period: PeriodEnum.ALL,
             dateFrom: null,
             dateTo: null
         };
@@ -19,82 +29,92 @@ export class CategoriesList {
         this.init().then();
     }
 
-    async init() {
-        this.intervalButtons = document.querySelectorAll('#interval-settings button');
-        this.intervalStartDate = document.getElementById('interval-start-date');
-        this.intervalEndDate = document.getElementById('interval-end-date');
-        this.intervalBtn = document.getElementById('interval-btn');
-
+    private async init(): Promise<void> {
         // Изначально скрываем инпуты дат
         this.hideDateInputs();
 
-        this.intervalButtons.forEach(button => {
-            button.addEventListener('click', (e) => this.intervalButtonHandler(e));
-        });
+        if (this.intervalButtons) {
+            (this.intervalButtons as NodeListOf<HTMLButtonElement>).forEach((button: HTMLButtonElement) => {
+                button.addEventListener('click', (e) => this.intervalButtonHandler(e));
+            });
+        }
 
-        this.intervalStartDate.addEventListener('change', () => this.dateChangeHandler());
-        this.intervalEndDate.addEventListener('change', () => this.dateChangeHandler());
+        if (this.intervalStartDate) {
+            this.intervalStartDate.addEventListener('change', () => this.dateChangeHandler());
+        }
+
+        if (this.intervalEndDate) {
+            this.intervalEndDate.addEventListener('change', () => this.dateChangeHandler());
+        }
 
         await this.loadOperations();
     }
 
-    hideDateInputs() {
-        const startDateLabel = this.intervalStartDate.previousElementSibling;
-        const endDateLabel = this.intervalEndDate.previousElementSibling;
+    private hideDateInputs(): void {
+        if (this.intervalStartDate && this.intervalStartDate.previousElementSibling &&
+            this.intervalEndDate && this.intervalEndDate.previousElementSibling) {
 
-        this.intervalStartDate.classList.add('d-none');
-        this.intervalEndDate.classList.add('d-none');
-        startDateLabel.classList.remove('d-none');
-        endDateLabel.classList.remove('d-none');
-    }
+            const startDateLabel = this.intervalStartDate.previousElementSibling;
+            const endDateLabel = this.intervalEndDate.previousElementSibling;
 
-    showDateInputs() {
-        const startDateLabel = this.intervalStartDate.previousElementSibling;
-        const endDateLabel = this.intervalEndDate.previousElementSibling;
-
-        this.intervalStartDate.classList.remove('d-none');
-        this.intervalEndDate.classList.remove('d-none');
-        startDateLabel.classList.add('d-none');
-        endDateLabel.classList.add('d-none');
-    }
-
-    async loadOperations() {
-        const response = await OperationService.getOperations(this.filter);
-
-        if (response.error) {
-            alert(response.error);
-            return;
+            this.intervalStartDate.classList.add('d-none');
+            this.intervalEndDate.classList.add('d-none');
+            startDateLabel.classList.remove('d-none');
+            endDateLabel.classList.remove('d-none');
         }
-
-        if (response.redirect) {
-            return this.openNewRoute(response.redirect);
-        }
-
-        this.renderOperations(response.operations);
     }
 
-    renderOperations(operations) {
+    private showDateInputs(): void {
+        if (this.intervalStartDate && this.intervalStartDate.previousElementSibling &&
+            this.intervalEndDate && this.intervalEndDate.previousElementSibling) {
+
+            const startDateLabel = this.intervalStartDate.previousElementSibling;
+            const endDateLabel = this.intervalEndDate.previousElementSibling;
+
+            this.intervalStartDate.classList.remove('d-none');
+            this.intervalEndDate.classList.remove('d-none');
+            startDateLabel.classList.add('d-none');
+            endDateLabel.classList.add('d-none');
+        }
+    }
+
+    private async loadOperations(): Promise<void> {
+        if (this.filter) {
+            const response = await OperationService.getOperations(this.filter);
+
+            if (response.error && response.message) {
+                alert(response.message);
+                console.log(response.message);
+            }
+
+            this.renderOperations(response.operations);
+        }
+    }
+
+    private renderOperations(operations: OperationType[]): void {
         const tbody = document.querySelector('table tbody');
-        tbody.innerHTML = '';
 
-        if (!operations || operations.length === 0) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="7">Нет операций</td>';
-            tbody.appendChild(tr);
-            return;
-        }
+        if (tbody) {
+            (tbody as HTMLElement).innerHTML = '';
 
-        operations.forEach((operation, index) => {
-            const tr = document.createElement('tr');
+            if (!operations || operations.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="7">Нет операций</td>';
+                tbody.appendChild(tr);
+                return;
+            }
 
-            const date = new Date(operation.date);
-            const formattedDate = DateUtils.formatDateToString(date);
+            operations.forEach((operation, index) => {
+                const tr = document.createElement('tr');
 
-            const type = operation.type === 'income' ?
-                '<span class="text-success">доход</span>' :
-                '<span class="text-danger">расход</span>';
+                const date = new Date(operation.date);
+                const formattedDate = DateUtils.formatDateToString(date);
 
-            tr.innerHTML = `
+                const type = operation.type === 'income' ?
+                    '<span class="text-success">доход</span>' :
+                    '<span class="text-danger">расход</span>';
+
+                tr.innerHTML = `
                 <td class="fw-bold">${index + 1}</td>
                 <td>${type}</td>
                 <td>${operation.category}</td>
@@ -111,103 +131,96 @@ export class CategoriesList {
                 </td>
             `;
 
-            tbody.appendChild(tr);
-        });
-
-        // Добавляем обработчик для кнопок удаления
-        const deleteBtnElements = document.querySelectorAll('[data-bs-toggle="modal"]');
-        const confirmDeleteBtnElement = document.getElementById('confirmDeleteBtn');
-        deleteBtnElements.forEach(button => {
-            button.addEventListener('click', () => {
-                const incomeId = button.getAttribute('data-id');
-                confirmDeleteBtnElement.setAttribute('data-id', incomeId);
+                tbody.appendChild(tr);
             });
-        });
 
-        // Обработчик подтверждения удаления
-        confirmDeleteBtnElement.addEventListener('click', async () => {
-            const operationId = document.getElementById('confirmDeleteBtn').getAttribute('data-id');
-            const response = await OperationService.deleteOperation(operationId);
+            // Добавляем обработчик для кнопок удаления
+            const deleteBtnElements = document.querySelectorAll('[data-bs-toggle="modal"]');
+            const confirmDeleteBtnElement = document.getElementById('confirmDeleteBtn');
+            deleteBtnElements.forEach(button => {
+                button.addEventListener('click', () => {
+                    const incomeId = button.getAttribute('data-id');
+                    if (incomeId) {
+                        confirmDeleteBtnElement?.setAttribute('data-id', incomeId);
+                    }
+                });
+            });
 
-            if (response.error) {
-                // alert(response.error);
-                return response.redirect ? this.openNewRoute(response.redirect) : null;
-            }
+            // Обработчик подтверждения удаления
+            confirmDeleteBtnElement?.addEventListener('click', async () => {
+                const operationId = document.getElementById('confirmDeleteBtn')?.getAttribute('data-id');
+                if (operationId) {
+                    const response = await OperationService.deleteOperation(parseInt(operationId));
 
-            // Обновляем список после удаления
-            this.openNewRoute('/categories');
-        });
-    }
+                    if (response.error && response.message) {
+                        alert(response.message);
+                        console.log(response.message);
+                    }
 
-    intervalButtonHandler(e) {
-        this.intervalButtons.forEach(button => {
-            button.classList.remove('active');
-        });
-
-        e.target.classList.add('active');
-
-        const period = e.target.textContent.toLowerCase();
-        this.filter.period = this.getPeriodValue(period);
-
-        // Сбрасываем даты интервала
-        this.filter.dateFrom = null;
-        this.filter.dateTo = null;
-        this.intervalStartDate.value = '';
-        this.intervalEndDate.value = '';
-
-        // Показываем инпуты только для интервала, для остальных скрываем
-        if (period === 'интервал') {
-            this.showDateInputs();
-        } else {
-            this.hideDateInputs();
+                    // Обновляем список после удаления
+                    this.openNewRoute('/categories').then();
+                }
+            });
         }
-
-        this.loadOperations().then();
     }
 
-    getPeriodValue(period) {
-        const periods = {
-            'сегодня': 'today',
-            'неделя': 'week',
-            'месяц': 'month',
-            'год': 'year',
-            'все': 'all',
-            'интервал': 'interval'
+    private intervalButtonHandler(e: Event): void {
+        if (this.intervalButtons) {
+            (this.intervalButtons as NodeListOf<HTMLButtonElement>).forEach(button => {
+                button.classList.remove('active');
+            });
+
+            if (e && e.target) {
+                (e.target as HTMLButtonElement).classList.add('active');
+
+                const period = (e.target as HTMLButtonElement).textContent?.toLowerCase();
+
+                if (this.filter && this.filter.period && period) {
+                    this.filter.period = this.getPeriodValue(period);
+
+                    // Сбрасываем даты интервала
+                    this.filter.dateFrom = null;
+                    this.filter.dateTo = null;
+
+                    if (this.intervalStartDate && this.intervalEndDate) {
+                        (this.intervalStartDate as HTMLInputElement).value = '';
+                        (this.intervalEndDate as HTMLInputElement).value = '';
+
+                        // Показываем инпуты только для интервала, для остальных скрываем
+                        if (period === 'интервал') {
+                            this.showDateInputs();
+                        } else {
+                            this.hideDateInputs();
+                        }
+
+                        this.loadOperations().then();
+                    }
+                }
+            }
+        }
+    }
+
+    private getPeriodValue(period: string): PeriodEnum {
+        const periods: PeriodMap = {
+            'сегодня': PeriodEnum.TODAY,
+            'неделя': PeriodEnum.WEEK,
+            'месяц': PeriodEnum.MONTH,
+            'год': PeriodEnum.YEAR,
+            'все': PeriodEnum.ALL,
+            'интервал': PeriodEnum.INTERVAL
         };
 
-        return periods[period] || 'all';
+        return periods[period as PeriodKey] || PeriodEnum.ALL;
     }
 
-    dateChangeHandler() {
-        if (this.intervalStartDate.value && this.intervalEndDate.value) {
-            this.filter.period = 'interval';
-            this.filter.dateFrom = this.intervalStartDate.value;
-            this.filter.dateTo = this.intervalEndDate.value;
-            this.loadOperations().then();
+    private dateChangeHandler() {
+        if (this.filter && this.intervalStartDate && this.intervalEndDate) {
+            if ((this.intervalStartDate as HTMLInputElement).value && (this.intervalEndDate as HTMLInputElement).value) {
+                this.filter.period = PeriodEnum.INTERVAL;
+                this.filter.dateFrom = (this.intervalStartDate as HTMLInputElement).value;
+                this.filter.dateTo = (this.intervalEndDate as HTMLInputElement).value;
+                this.loadOperations().then();
+            }
         }
-    }
-
-    prepareDeleteOperation(id) {
-        const confirmButton = document.querySelector('#staticBackdrop .btn-danger');
-        const newConfirmButton = confirmButton.cloneNode(true);
-        confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
-
-        newConfirmButton.addEventListener('click', async () => {
-            const response = await OperationService.deleteOperation(id);
-
-            if (response.error) {
-                alert(response.error);
-                return;
-            }
-
-            if (response.redirect) {
-                return this.openNewRoute(response.redirect);
-            }
-
-            const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdrop'));
-            modal.hide();
-
-            await this.loadOperations();
-        });
     }
 }

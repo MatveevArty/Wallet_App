@@ -27,7 +27,11 @@ import {RouteType} from "./types/route.type";
 import {BalanceType} from "./types/balance.type";
 import {DefaultErrorType} from "./types/default-error.type";
 import {UserInfoType} from "./types/token.type";
-import bootstrap from "bootstrap";
+
+import * as bootstrap from 'bootstrap';
+import { Collapse } from 'bootstrap';
+
+import {TokenEnum} from "./enums/token.enum";
 
 export class Router {
     private readonly titlePageElement: HTMLElement | null;
@@ -223,7 +227,7 @@ export class Router {
         }
     }
 
-    private async activateRoute(e: any, oldRoute: string | null = null): Promise<void> {
+    private async activateRoute(e: Event | null, oldRoute: string | null = null): Promise<void> {
         if (oldRoute) {
             const currentRoute: RouteType | undefined = this.routes.find(item => item.route === oldRoute);
 
@@ -275,8 +279,8 @@ export class Router {
                     const profileNameElement: HTMLElement | null  = document.getElementById('profile-name');
 
                     if (!this.userName) {
-                        const userInfoName: string | null | undefined = AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey) ?
-                            (AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey) as UserInfoType).name : '';
+                        const userInfoName: string | null | undefined = AuthUtils.getAuthInfo(TokenEnum.userInfoKey) ?
+                            (AuthUtils.getAuthInfo(TokenEnum.userInfoKey) as UserInfoType).name : '';
                         if (userInfoName) {
                             this.userName = userInfoName;
                         }
@@ -325,13 +329,15 @@ export class Router {
 
             // Управление выпадающим меню
             if (categoriesDropdown) {
-                const bsCollapse: bootstrap.Collapse = bootstrap.Collapse.getInstance(categoriesDropdown) ||
-                    new bootstrap.Collapse(categoriesDropdown, {toggle: false});
+                // Исправленная часть:
+                const bsCollapse = new bootstrap.Collapse(categoriesDropdown, {
+                    toggle: false
+                });
 
                 // Активация в зависимости от текущего маршрута
                 switch (route.route) {
                     case '/':
-                        let linkMain: Element | null = document.querySelector('#sidebar-links a[href="/"]');
+                        const linkMain = document.querySelector('#sidebar-links a[href="/"]');
                         if (linkMain) {
                             this.setActiveLink(linkMain);
                         }
@@ -339,7 +345,7 @@ export class Router {
                         break;
 
                     case '/categories':
-                        let linkCategories: Element | null = document.querySelector('#sidebar-links a[href="/categories"]');
+                        const linkCategories = document.querySelector('#sidebar-links a[href="/categories"]');
                         if (linkCategories) {
                             this.setActiveLink(linkCategories);
                         }
@@ -348,11 +354,11 @@ export class Router {
 
                     case '/income':
                         this.setActiveLink(categoriesMainLink);
-                        let linkIncome: Element | null = document.querySelector('#categories-dropdown a[href="/income"]');
+                        const linkIncome = document.querySelector('#categories-dropdown a[href="/income"]');
                         if (linkIncome) {
                             this.setActiveLink(linkIncome);
                         }
-                        let linkExpenseNotActive: Element | null = document.querySelector('#categories-dropdown a[href="/expense"]');
+                        const linkExpenseNotActive = document.querySelector('#categories-dropdown a[href="/expense"]');
                         if (linkExpenseNotActive) {
                             linkExpenseNotActive.classList.add('border', 'border-2', 'border-primary');
                         }
@@ -361,11 +367,11 @@ export class Router {
 
                     case '/expense':
                         this.setActiveLink(categoriesMainLink);
-                        let linkExpense: Element | null = document.querySelector('#categories-dropdown a[href="/expense"]');
+                        const linkExpense = document.querySelector('#categories-dropdown a[href="/expense"]');
                         if (linkExpense) {
                             this.setActiveLink(linkExpense);
                         }
-                        let linkIncomeNotActive: Element | null = document.querySelector('#categories-dropdown a[href="/income"]');
+                        const linkIncomeNotActive = document.querySelector('#categories-dropdown a[href="/income"]');
                         if (linkIncomeNotActive) {
                             linkIncomeNotActive.classList.add('border', 'border-2', 'border-primary');
                         }

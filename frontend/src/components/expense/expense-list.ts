@@ -1,55 +1,75 @@
 import {ExpenseService} from "../../services/expense-service";
 import {RenderElementUtils} from "../../utils/render-element-utils";
+import {IdTitleDefaultType} from "../../types/id-title-default.type";
+import {ItemsReturnObjType} from "../../types/items-return-obj.type";
+import {DefaultErrorType} from "../../types/default-error.type";
 
 export class ExpenseList {
-    constructor(openNewRoute) {
+    readonly openNewRoute: (url: string) => Promise<void>;
+    readonly expenseListContainer: HTMLElement | null = null;
+
+    constructor(openNewRoute: (url: string) => Promise<void>) {
         this.openNewRoute = openNewRoute;
         this.expenseListContainer = document.getElementById("expenses-container");
         this.getExpensesList().then();
     }
 
-    async getExpensesList() {
-        const response = await ExpenseService.getExpenses();
+    private async getExpensesList(): Promise<void | null> {
+        const response: ItemsReturnObjType = await ExpenseService.getExpenses();
 
-        if (response.error) {
-            console.log(response.error);
-            return response.redirect ? this.openNewRoute(response.redirect) : null;
+        if (response.error && response.message) {
+            alert(response.message);
+            console.log(response.message);
         }
 
-        return this.showExpensesList(response.expenses);
+        if (response.items) {
+            return this.showExpensesList(response.items);
+        }
     }
 
-    showExpensesList(expenses) {
-        for (let i = 0; i < expenses.length; i++) {
-            this.expenseListContainer.appendChild(RenderElementUtils.renderElementList(expenses[i], '/expense'));
-        }
-        this.expenseListContainer.appendChild(RenderElementUtils.renderElementAddBtn('/expense/create'));
-
-        // Добавляем обработчик для кнопок удаления
-        const deleteBtnElements = document.querySelectorAll('[data-bs-target="#deleteModal"]');
-        deleteBtnElements.forEach(button => {
-            button.addEventListener('click', () => {
-                const expenseId = button.getAttribute('data-id');
-                document.getElementById('confirmDeleteBtn').setAttribute('data-id', expenseId);
-            });
-        });
-
-        // Обработчик подтверждения удаления
-        const confirmDeleteBtnElement = document.getElementById('confirmDeleteBtn');
-        confirmDeleteBtnElement.addEventListener('click', async () => {
-            const expenseId = document.getElementById('confirmDeleteBtn').getAttribute('data-id');
-            const response = await ExpenseService.deleteExpense(expenseId);
-
-            if (response.error) {
-                alert(response.error);
-                return response.redirect ? this.openNewRoute(response.redirect) : null;
+    private showExpensesList(expenses: IdTitleDefaultType[]): void {
+        if (this.expenseListContainer) {
+            for (let i = 0; i < expenses.length; i++) {
+                this.expenseListContainer.appendChild(RenderElementUtils.renderElementList(expenses[i], '/expense'));
             }
+            this.expenseListContainer.appendChild(RenderElementUtils.renderElementAddBtn('/expense/create'));
 
-            // Обновляем список после удаления
-            this.expenseListContainer.innerHTML = '';
-            this.openNewRoute('/expense');
-        });
+            // Добавляем обработчик для кнопок удаления
+            const deleteBtnElements: NodeListOf<Element> = document.querySelectorAll('[data-bs-target="#deleteModal"]');
+            deleteBtnElements.forEach(button => {
+                button.addEventListener('click', () => {
+                    const expenseId = button.getAttribute('data-id');
+                    const confirmBtn = document.getElementById('confirmDeleteBtn');
+                    if (confirmBtn && expenseId) {
+                        confirmBtn.setAttribute('data-id', expenseId);
+                    }
+                });
+            });
+
+            // Обработчик подтверждения удаления
+            const confirmDeleteBtnElement = document.getElementById('confirmDeleteBtn');
+            if (confirmDeleteBtnElement) {
+                confirmDeleteBtnElement.addEventListener('click', async () => {
+                    const confirmBtn = document.getElementById('confirmDeleteBtn');
+                    if (confirmBtn) {
+                        const expenseId = confirmBtn.getAttribute('data-id');
+                        if (expenseId) {
+                            const parsedExpenseId = parseInt(expenseId);
+                            const response: DefaultErrorType = await ExpenseService.deleteExpense(parsedExpenseId);
+
+                            if (response.error && response.message) {
+                                alert(response.message);
+                                console.log(response.message);
+                            }
+                            // Обновляем список после удаления
+                            if (this.expenseListContainer) {
+                                this.expenseListContainer.innerHTML = '';
+                                this.openNewRoute('/expense').then();
+                            }
+                        }
+                    }
+                });
+            }
+        }
     }
-
-
 }

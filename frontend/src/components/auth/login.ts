@@ -2,16 +2,17 @@ import {AuthUtils} from "../../utils/auth-utils";
 import {ValidationUtils} from "../../utils/validation-utils";
 import {AuthService} from "../../services/auth-service";
 import {ValidationsType} from "../../types/validations.type";
+import {TokenEnum} from "../../enums/token.enum";
+import {LoginSuccessType} from "../../types/login-success.type";
 
 export class Login {
-    private readonly openNewRoute: (url: string) => Promise<void>;
+    readonly openNewRoute: (url: string) => Promise<void>;
     readonly emailElement: HTMLInputElement | HTMLElement | null;
     readonly passwordElement: HTMLInputElement | HTMLElement | null;
-    private rememberElement: HTMLInputElement | HTMLElement | null;
-    private commonErrorElement: HTMLElement | null;
+    readonly rememberElement: HTMLInputElement | HTMLElement | null;
+    readonly commonErrorElement: HTMLElement | null;
     readonly loginBtn: HTMLButtonElement | HTMLElement | null;
     readonly validations: ValidationsType[] | null;
-
 
     constructor(openNewRoute: (url: string) => Promise<void>) {
         this.openNewRoute = openNewRoute;
@@ -21,12 +22,13 @@ export class Login {
         this.commonErrorElement = document.getElementById('common-error');
         this.loginBtn = document.getElementById('process-button');
         this.validations = [
-            {element: this.passwordElement},
-            {element: this.emailElement, options: {pattern: /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/}},
+            {element: this.passwordElement as HTMLInputElement},
+            {element: this.emailElement as HTMLInputElement,
+                options: {pattern: /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/}},
         ];
 
         // Запрет на логин, если уже авторизован
-        if (AuthUtils.getAuthInfo(AuthUtils.accessTokenKey)) {
+        if (AuthUtils.getAuthInfo(TokenEnum.accessTokenKey)) {
             this.openNewRoute('/').then();
             return;
         }
@@ -37,30 +39,31 @@ export class Login {
     }
 
 
-    async login() {
+    private async login(): Promise<void> {
 
         if (this.commonErrorElement) {
             this.commonErrorElement.style.display = 'none';
         }
 
-        if (this.validations) {
+        if (this.validations && this.emailElement && this.passwordElement && this.rememberElement) {
             if (ValidationUtils.validateForm(this.validations)) {
                 const loginResult = await AuthService.logIn({
-                    email: this.emailElement.value,
-                    password: this.passwordElement.value,
-                    rememberMe: this.rememberElement.checked
+                    email: (this.emailElement as HTMLInputElement).value,
+                    password: (this.passwordElement as HTMLInputElement).value,
+                    rememberMe: (this.rememberElement as HTMLInputElement).checked
                 });
 
                 if (loginResult) {
-                    AuthUtils.setAuthInfo(loginResult.tokens.accessToken, loginResult.tokens.refreshToken, {
-                        id: loginResult.id,
-                        name: loginResult.user.name + ' ' + loginResult.user.lastName
+                    AuthUtils.setAuthInfo((loginResult as LoginSuccessType).tokens.accessToken, (loginResult as LoginSuccessType).tokens.refreshToken, {
+                        id: (loginResult as LoginSuccessType).user.id,
+                        name: (loginResult as LoginSuccessType).user.name + ' ' + (loginResult as LoginSuccessType).user.lastName
                     });
 
                     return this.openNewRoute('/');
                 }
-
-                this.commonErrorElement.style.display = 'block';
+                if (this.commonErrorElement) {
+                    this.commonErrorElement.style.display = 'block';
+                }
             }
         }
     }

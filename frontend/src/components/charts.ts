@@ -2,14 +2,34 @@ import {AuthUtils} from "../utils/auth-utils";
 import {OperationService} from "../services/operation-service";
 import {IncomeService} from "../services/income-service";
 import {ExpenseService} from "../services/expense-service";
+import {ItemsReturnObjType} from "../types/items-return-obj.type";
+import {DateFilterType} from "../types/date-filter.type";
+import {IdTitleDefaultType} from "../types/id-title-default.type";
+import {OperationsReturnObjType} from "../types/operations-return-obj.type";
+import {OperationType} from "../types/operation.type";
+import {NewRouteCallbackType} from "../types/new-route-callback.type";
+import {TokenEnum} from "../enums/token.enum";
+import {PeriodEnum} from "../enums/period.enum";
+import {Chart} from "chart.js";
 
 export class ChartBuild {
-    constructor(openNewRoute) {
+    private readonly openNewRoute: NewRouteCallbackType;
+    private incomeChart: Chart | null = null;
+    private expenseChart: Chart | null = null;
+    private filter: DateFilterType;
+    private categories: {
+        income: IdTitleDefaultType[];
+        expense: IdTitleDefaultType[];
+    };
+    private intervalButtons: NodeListOf<HTMLButtonElement> | null = null;
+    private intervalStartDate: HTMLInputElement | null = null;
+    private intervalEndDate: HTMLInputElement | null = null;
+    private intervalBtn: HTMLButtonElement | null = null;
+
+    constructor(openNewRoute: NewRouteCallbackType) {
         this.openNewRoute = openNewRoute;
-        this.incomeChart = null;
-        this.expenseChart = null;
         this.filter = {
-            period: 'all',
+            period: PeriodEnum.ALL,
             dateFrom: null,
             dateTo: null
         };
@@ -18,8 +38,9 @@ export class ChartBuild {
             expense: []
         };
 
-        if (!AuthUtils.getAuthInfo(AuthUtils.accessTokenKey)) {
-            return this.openNewRoute('/login');
+        if (!AuthUtils.getAuthInfo(TokenEnum.accessTokenKey)) {
+            this.openNewRoute('/login').then();
+            return;
         }
 
         this.initElements();
@@ -28,28 +49,28 @@ export class ChartBuild {
         this.loadCategories().then(() => this.loadChartData());
     }
 
-    async loadCategories() {
+    private async loadCategories(): Promise<void> {
         // Загрузка категорий доходов
-        const incomeResponse = await IncomeService.getIncomes();
-        if (!incomeResponse.error && incomeResponse.incomes) {
-            this.categories.income = incomeResponse.incomes;
+        const incomeResponse: ItemsReturnObjType = await IncomeService.getIncomes();
+        if (!incomeResponse.error && incomeResponse.items) {
+            this.categories.income = incomeResponse.items;
         }
 
         // Загрузка категорий расходов
-        const expenseResponse = await ExpenseService.getExpenses();
-        if (!expenseResponse.error && expenseResponse.expenses) {
-            this.categories.expense = expenseResponse.expenses;
+        const expenseResponse: ItemsReturnObjType = await ExpenseService.getExpenses();
+        if (!expenseResponse.error && expenseResponse.items) {
+            this.categories.expense = expenseResponse.items;
         }
     }
 
-    initElements() {
+    private initElements(): void {
         this.intervalButtons = document.querySelectorAll('#interval-settings button');
-        this.intervalStartDate = document.getElementById('interval-start-date');
-        this.intervalEndDate = document.getElementById('interval-end-date');
-        this.intervalBtn = document.getElementById('interval-btn');
+        this.intervalStartDate = document.getElementById('interval-start-date') as HTMLInputElement;
+        this.intervalEndDate = document.getElementById('interval-end-date') as HTMLInputElement;
+        this.intervalBtn = document.getElementById('interval-btn') as HTMLButtonElement;
     }
 
-    initCharts() {
+    private initCharts(): void {
         const chartOptions = {
             responsive: true,
             maintainAspectRatio: false,
@@ -59,7 +80,7 @@ export class ChartBuild {
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
+                        label: function(context: any) {
                             return `${context.label}: ${context.raw}$`;
                         }
                     }
@@ -68,8 +89,11 @@ export class ChartBuild {
         };
 
         // Инициализация пустых графиков
+        const incomeCtx = document.getElementById('incomeChart') as HTMLCanvasElement;
+        const expenseCtx = document.getElementById('expenseChart') as HTMLCanvasElement;
+
         this.incomeChart = new Chart(
-            document.getElementById('incomeChart'),
+            incomeCtx,
             {
                 type: 'pie',
                 data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
@@ -78,7 +102,7 @@ export class ChartBuild {
         );
 
         this.expenseChart = new Chart(
-            document.getElementById('expenseChart'),
+            expenseCtx,
             {
                 type: 'pie',
                 data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
@@ -87,38 +111,40 @@ export class ChartBuild {
         );
     }
 
-    setupEventListeners() {
+    private setupEventListeners(): void {
         // Обработчики для кнопок периода
-        this.intervalButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                this.intervalButtons.forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
+        this.intervalButtons?.forEach(button => {
+            button.addEventListener('click', (e: Event) => {
+                this.intervalButtons?.forEach(btn => btn.classList.remove('active'));
+                (e.target as HTMLButtonElement).classList.add('active');
 
-                const period = e.target.textContent.toLowerCase();
-                this.filter.period = this.getPeriodValue(period);
-                this.filter.dateFrom = null;
-                this.filter.dateTo = null;
+                const period = (e.target as HTMLButtonElement).textContent?.toLowerCase();
+                if (period) {
+                    this.filter.period = this.getPeriodValue(period);
+                    this.filter.dateFrom = null;
+                    this.filter.dateTo = null;
 
-                if (period === 'интервал') {
-                    this.showDateInputs();
-                } else {
-                    this.hideDateInputs();
-                    this.loadChartData().then();
+                    if (period === 'интервал') {
+                        this.showDateInputs();
+                    } else {
+                        this.hideDateInputs();
+                        this.loadChartData().then();
+                    }
                 }
             });
         });
 
         // Обработчики для полей дат
-        this.intervalStartDate.addEventListener('change', () => {
-            if (this.intervalStartDate.value && this.intervalEndDate.value) {
+        this.intervalStartDate?.addEventListener('change', () => {
+            if (this.intervalStartDate?.value && this.intervalEndDate?.value) {
                 this.filter.dateFrom = this.intervalStartDate.value;
                 this.filter.dateTo = this.intervalEndDate.value;
                 this.loadChartData().then();
             }
         });
 
-        this.intervalEndDate.addEventListener('change', () => {
-            if (this.intervalStartDate.value && this.intervalEndDate.value) {
+        this.intervalEndDate?.addEventListener('change', () => {
+            if (this.intervalStartDate?.value && this.intervalEndDate?.value) {
                 this.filter.dateFrom = this.intervalStartDate.value;
                 this.filter.dateTo = this.intervalEndDate.value;
                 this.loadChartData().then();
@@ -126,50 +152,55 @@ export class ChartBuild {
         });
     }
 
-    showDateInputs() {
+    private showDateInputs(): void {
+        if (!this.intervalStartDate || !this.intervalEndDate) return;
+
         const startDateLabel = this.intervalStartDate.previousElementSibling;
         const endDateLabel = this.intervalEndDate.previousElementSibling;
 
         this.intervalStartDate.classList.remove('d-none');
         this.intervalEndDate.classList.remove('d-none');
-        startDateLabel.classList.add('d-none');
-        endDateLabel.classList.add('d-none');
+        startDateLabel?.classList.add('d-none');
+        endDateLabel?.classList.add('d-none');
     }
 
-    hideDateInputs() {
+    private hideDateInputs(): void {
+        if (!this.intervalStartDate || !this.intervalEndDate) return;
+
         const startDateLabel = this.intervalStartDate.previousElementSibling;
         const endDateLabel = this.intervalEndDate.previousElementSibling;
 
         this.intervalStartDate.classList.add('d-none');
         this.intervalEndDate.classList.add('d-none');
-        startDateLabel.classList.remove('d-none');
-        endDateLabel.classList.remove('d-none');
+        startDateLabel?.classList.remove('d-none');
+        endDateLabel?.classList.remove('d-none');
     }
 
-    getPeriodValue(period) {
-        const periods = {
-            'сегодня': 'today',
-            'неделя': 'week',
-            'месяц': 'month',
-            'год': 'year',
-            'все': 'all',
-            'интервал': 'interval'
+    private getPeriodValue(period: string): PeriodEnum {
+        const periods: Record<string, PeriodEnum> = {
+            'сегодня': PeriodEnum.TODAY,
+            'неделя': PeriodEnum.WEEK,
+            'месяц': PeriodEnum.MONTH,
+            'год': PeriodEnum.YEAR,
+            'все': PeriodEnum.ALL,
+            'интервал': PeriodEnum.INTERVAL
         };
-        return periods[period] || 'today';
+        return periods[period] || PeriodEnum.TODAY;
     }
 
-    async loadChartData() {
-        const response = await OperationService.getOperations(this.filter);
+    private async loadChartData(): Promise<void> {
+        const response: OperationsReturnObjType = await OperationService.getOperations(this.filter);
 
-        if (response.error) {
-            alert(response.error);
-            return response.redirect ? this.openNewRoute(response.redirect) : null;
+        if (response.error && response.message) {
+            alert(response.message);
+            console.log(response.message);
+            return;
         }
 
         this.processChartData(response.operations);
     }
 
-    processChartData(operations) {
+    private processChartData(operations: OperationType[] | undefined): void {
         if (!operations || operations.length === 0) {
             this.updateChart(this.incomeChart, [], [], []);
             this.updateChart(this.expenseChart, [], [], []);
@@ -178,8 +209,8 @@ export class ChartBuild {
             return;
         }
 
-        const incomeData = {};
-        const expenseData = {};
+        const incomeData: Record<string, number> = {};
+        const expenseData: Record<string, number> = {};
         const colors = ['#dc3545', '#fd7e14', '#ffc107', '#198754', '#0d6efd', '#6f42c1'];
 
         operations.forEach(operation => {
@@ -213,8 +244,13 @@ export class ChartBuild {
         this.updateLegend('expense', expenseCategories);
     }
 
-    updateLegend(type, categories) {
-        const legendContainer = document.querySelector(`#${type}Chart`).closest('.card-body').querySelector('.d-flex');
+    private updateLegend(type: 'income' | 'expense', categories: string[]): void {
+        const chartElement = document.querySelector(`#${type}Chart`);
+        if (!chartElement) return;
+
+        const legendContainer = chartElement.closest('.card-body')?.querySelector('.d-flex');
+        if (!legendContainer) return;
+
         legendContainer.innerHTML = '';
 
         if (categories.length === 0) {
@@ -237,7 +273,7 @@ export class ChartBuild {
 
             const colorBox = document.createElement('div');
             colorBox.className = 'me-2';
-            colorBox.style = `width: 35px; height: 10px; background-color: ${colors[index % colors.length]}`;
+            colorBox.style.cssText = `width: 35px; height: 10px; background-color: ${colors[index % colors.length]}`;
 
             const categoryName = document.createElement('span');
             categoryName.className = 'fw-medium small';
@@ -249,7 +285,9 @@ export class ChartBuild {
         });
     }
 
-    updateChart(chart, labels, data, colors) {
+    private updateChart(chart: Chart | null, labels: string[], data: number[], colors: string[]): void {
+        if (!chart) return;
+
         chart.data.labels = labels;
         chart.data.datasets[0].data = data;
         chart.data.datasets[0].backgroundColor = colors;

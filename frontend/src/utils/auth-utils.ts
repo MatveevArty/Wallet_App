@@ -4,22 +4,18 @@ import {TokenType, UserInfoType} from "../types/token.type";
 import {HttpMethodEnum} from "../enums/http-method.enum";
 
 export class AuthUtils {
-    public static accessTokenKey: string = 'accessToken';
-    public static refreshTokenKey: string = 'refreshToken';
-    public static userInfoTokenKey: string = 'userInfo';
-
     public static setAuthInfo(accessToken: string, refreshToken: string, userInfo: UserInfoType | null = null): void {
         localStorage.setItem(TokenEnum.accessTokenKey, accessToken);
         localStorage.setItem(TokenEnum.refreshTokenKey, refreshToken);
         if (userInfo) {
-            localStorage.setItem(TokenEnum.userInfoTokenKey, JSON.stringify(userInfo));
+            localStorage.setItem(TokenEnum.userInfoKey, JSON.stringify(userInfo));
         }
     }
 
     public static removeAuthInfo(): void {
         localStorage.removeItem(TokenEnum.accessTokenKey);
         localStorage.removeItem(TokenEnum.refreshTokenKey);
-        localStorage.removeItem(TokenEnum.userInfoTokenKey);
+        localStorage.removeItem(TokenEnum.userInfoKey);
     }
 
     public static getAuthInfo(key: string | null = null): string | TokenType | UserInfoType | null | undefined {
@@ -29,14 +25,14 @@ export class AuthUtils {
                 return localStorage.getItem(TokenEnum.accessTokenKey);
             } else if (key === TokenEnum.refreshTokenKey) {
                 return localStorage.getItem(TokenEnum.refreshTokenKey);
-            } else if (key === TokenEnum.userInfoTokenKey) {
-                return localStorage.getItem(TokenEnum.userInfoTokenKey);
+            } else if (key === TokenEnum.userInfoKey) {
+                return localStorage.getItem(TokenEnum.userInfoKey);
             }
         } else {
             return {
                 [TokenEnum.accessTokenKey]: localStorage.getItem(TokenEnum.accessTokenKey),
                 [TokenEnum.refreshTokenKey]: localStorage.getItem(TokenEnum.refreshTokenKey),
-                [TokenEnum.userInfoTokenKey]: JSON.parse(localStorage.getItem(TokenEnum.refreshTokenKey) as string) as UserInfoType,
+                [TokenEnum.userInfoKey]: JSON.parse(localStorage.getItem(TokenEnum.userInfoKey) as string) as UserInfoType,
             }
         }
     }

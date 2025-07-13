@@ -1,0 +1,1 @@
+export type NewRouteCallbackType = (url: string) => Promise<void>;

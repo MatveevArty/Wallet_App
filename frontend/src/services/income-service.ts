@@ -1,103 +1,106 @@
 import {HttpUtils} from '../utils/http-utils'
+import {HttpMethodEnum} from "../enums/http-method.enum";
+import {DeleteResultType} from "../types/delete-result.type";
+import {DefaultErrorType} from "../types/default-error.type";
+import {ItemCreateType} from "../types/item-create.type";
+import {ItemResultType} from "../types/item-result.type";
+import {ItemReturnObjType} from "../types/item-return-obj.type";
+import {ItemsResultType} from "../types/items-result.type";
+import {ItemsReturnObjType} from "../types/items-return-obj.type";
 
 export class IncomeService {
 
-    static async getIncomes() {
-        const returnObject = {
+    public static async getIncomes(): Promise<ItemsReturnObjType> {
+        const returnObject: ItemsReturnObjType = {
+            items: [],
             error: false,
-            redirect: null,
-            incomes: null,
+            message: '',
         }
 
-        const result = await HttpUtils.request('/categories/income');
+        const result: ItemsResultType = await HttpUtils.request('/categories/income');
 
-        if (!result.response || result.error || result.redirect) {
-            returnObject.error = 'Возникла ошибка при запросе доходов';
-            if (result.redirect) {
-                // Перенаправление пользователя в случае редиректа в ответе запроса
-                returnObject.redirect = result.redirect;
-            }
+        if (result.error || !result.response) {
+            returnObject.message = 'Возникла ошибка при запросе доходов';
+            returnObject.error = true;
             return returnObject;
         }
-        returnObject.incomes = result.response;
+        returnObject.items = result.response;
         return returnObject;
     }
 
-    static async getIncome(id) {
-        const returnObject = {
+    public static async getIncome(id: number): Promise<ItemReturnObjType> {
+        const returnObject: ItemReturnObjType = {
+            item: {
+                id: -1,
+                title: ""
+            },
             error: false,
-            redirect: null,
-            income: null,
+            message: '',
         }
 
-        const result = await HttpUtils.request('/categories/income/' + id);
+        const result: ItemResultType = await HttpUtils.request('/categories/income/' + id);
 
-        if (!result.response || result.error || result.redirect) {
-            returnObject.error = 'Возникла ошибка при запросе данного дохода';
-            if (result.redirect) {
-                // Перенаправление пользователя в случае редиректа в ответе запроса
-                returnObject.redirect = result.redirect;
-            }
+        if (result.error || !result.response) {
+            returnObject.message = 'Возникла ошибка при запросе данного дохода';
+            returnObject.error = true;
             return returnObject;
         }
-        returnObject.income = result.response;
+        returnObject.item = result.response;
         return returnObject;
     }
 
-    static async createIncome(data) {
-        const returnObject = {
+    static async createIncome(data: ItemCreateType): Promise<ItemReturnObjType> {
+        const returnObject: ItemReturnObjType = {
+            item: {
+                id: -1,
+                title: ""
+            },
             error: false,
-            redirect: null,
-            id: null
+            message: '',
         }
 
-        const result = await HttpUtils.request('/categories/income', "POST", true, data);
+        const result: ItemResultType = await HttpUtils.request('/categories/income', HttpMethodEnum.post, true, data);
 
-        if (!result.response || result.error || result.redirect) {
-            returnObject.error = 'Возникла ошибка при создании данного дохода';
-            // Перенаправление пользователя в случае редиректа в ответе запроса
-            if (result.redirect) {
-                returnObject.redirect = result.redirect;
-            }
+        if (result.error || !result.response) {
+            returnObject.message = 'Возникла ошибка при создании данного дохода';
+            returnObject.error = true;
             return returnObject;
         }
-        returnObject.id = result.response.id;
+        returnObject.item = result.response;
         return returnObject;
     }
 
-    static async updateIncome(id, data) {
-        const returnObject = {
+    static async updateIncome(id: number, data: ItemCreateType): Promise<ItemReturnObjType> {
+        const returnObject: ItemReturnObjType = {
+            item: {
+                id: -1,
+                title: ""
+            },
             error: false,
-            redirect: null,
+            message: '',
         }
 
-        const result = await HttpUtils.request('/categories/income/' + id, "PUT", true, data);
+        const result: ItemResultType = await HttpUtils.request('/categories/income/' + id, HttpMethodEnum.put, true, data);
 
-        if (!result.response || result.error || result.redirect) {
-            returnObject.error = 'Возникла ошибка при редактировании данного дохода';
-            // Перенаправление пользователя в случае редиректа в ответе запроса
-            if (result.redirect) {
-                returnObject.redirect = result.redirect;
-            }
+        if (result.error || !result.response) {
+            returnObject.message = 'Возникла ошибка при редактировании данного дохода';
+            returnObject.error = true;
             return returnObject;
         }
         return returnObject;
     }
 
-    static async deleteIncome(id) {
-        const returnObject = {
+    static async deleteIncome(id: number): Promise<DefaultErrorType> {
+        const returnObject: DefaultErrorType = {
             error: false,
-            redirect: null,
+            message: '',
         }
 
-        const result = await HttpUtils.request('/categories/income/' + id, "DELETE");
+        const result: DeleteResultType = await HttpUtils.request('/categories/income/' + id, HttpMethodEnum.delete);
 
-        if (!result.response || result.error || result.redirect) {
-            returnObject.error = 'Возникла ошибка при удалении данного дохода';
-            // Перенаправление пользователя в случае редиректа в ответе запроса
-            if (result.redirect) {
-                returnObject.redirect = result.redirect;
-            }
+        if (result.error || !result.response) {
+            returnObject.message = 'Возникла ошибка при удалении данного дохода';
+            returnObject.error = true;
             return returnObject;
         }
         return returnObject;
