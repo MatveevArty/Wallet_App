@@ -10,7 +10,7 @@ import {OperationType} from "../types/operation.type";
 import {NewRouteCallbackType} from "../types/new-route-callback.type";
 import {TokenEnum} from "../enums/token.enum";
 import {PeriodEnum} from "../enums/period.enum";
-import {Chart} from "chart.js";
+import {Chart, registerables} from "chart.js";
 
 export class ChartBuild {
     private readonly openNewRoute: NewRouteCallbackType;
@@ -71,6 +71,8 @@ export class ChartBuild {
     }
 
     private initCharts(): void {
+        Chart.register(...registerables);
+
         const chartOptions = {
             responsive: true,
             maintainAspectRatio: false,

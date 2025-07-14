@@ -15,7 +15,7 @@ export class ValidationUtils {
 
     public static validateField(field: ValidationsType): boolean | undefined {
         if (field.element) {
-            let condition: boolean = false;
+            let condition: boolean = Boolean(field.element.value);
 
             if (field.options) {
                 if (field.element.value && field.options.pattern) {
