@@ -29,7 +29,7 @@ import {DefaultErrorType} from "./types/default-error.type";
 import {UserInfoType} from "./types/token.type";
 
 import * as bootstrap from 'bootstrap';
-import { Collapse } from 'bootstrap';
+import {Collapse} from 'bootstrap';
 
 import {TokenEnum} from "./enums/token.enum";
 
@@ -217,6 +217,7 @@ export class Router {
     private initEvents(): void {
         window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
         window.addEventListener('popstate', this.activateRoute.bind(this));
+        document.addEventListener('click', this.clickHandler.bind(this));
     }
 
     public async openNewRoute(url: string): Promise<void> {
@@ -224,6 +225,32 @@ export class Router {
         history.pushState({}, '', url);
         if (currentRoute) {
             await this.activateRoute(null, currentRoute);
+        }
+    }
+
+    async clickHandler(e: Event): Promise<void> {
+        const target = e.target as HTMLElement;
+        let element = null;
+        if (target) {
+            if (target.nodeName && target.parentNode) {
+                if (target.nodeName === 'A') {
+                    element = e.target;
+                } else if (target.parentNode.nodeName === 'A') {
+                    element = target.parentNode;
+                }
+                if (element) {
+                    e.preventDefault();
+
+                    const currentRoute = window.location.pathname;
+                    const url = (element as HTMLAnchorElement).href.replace(window.location.origin, '');
+                    if (!url || (currentRoute === url.replace('#', '')) || url.startsWith('javascript:void(0)')) {
+                        return;
+                    }
+
+                    await this.openNewRoute(url);
+
+                }
+            }
         }
     }
 
@@ -276,11 +303,13 @@ export class Router {
                         }
                     }
 
-                    const profileNameElement: HTMLElement | null  = document.getElementById('profile-name');
+                    const profileNameElement: HTMLElement | null = document.getElementById('profile-name');
 
                     if (!this.userName) {
-                        const userInfoName: string | null | undefined = AuthUtils.getAuthInfo(TokenEnum.userInfoKey) ?
-                            (AuthUtils.getAuthInfo(TokenEnum.userInfoKey) as UserInfoType).name : '';
+                        const userInfo = AuthUtils.getAuthInfo(TokenEnum.userInfoKey);
+                        const userInfoName: string | null | undefined = userInfo
+                            ? (JSON.parse(userInfo as string) as UserInfoType).name
+                            : '';
                         if (userInfoName) {
                             this.userName = userInfoName;
                         }

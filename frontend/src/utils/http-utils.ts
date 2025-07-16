@@ -12,14 +12,13 @@ export class HttpUtils {
             redirect: '',
         };
 
-        const params = {
+        const params: any = {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'x-auth-token' : 'no-token',
             },
-            body: '',
         };
 
         let accessToken: string | undefined | null;
@@ -31,7 +30,7 @@ export class HttpUtils {
             }
         }
 
-        if (body) {
+        if (body && method !== HttpMethodEnum.get) {
             params.body = JSON.stringify(body);
         }
 
